@@ -13,13 +13,14 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapters.MainAdapter;
-import model.Memo;
+import adapters.NoteAdapter;
+import application.NoteApplication;
+import model.Note;
 
 public class MainActivity extends AppCompatActivity {
 
-  private List<Memo> memos;
-  private MainAdapter mainAdapter;
+  private List<Note> noteList;
+  private NoteAdapter noteAdapter;
 
   private ListView mainLv;
 
@@ -39,14 +40,10 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    memos = new ArrayList<>();
-    mainAdapter = new MainAdapter(this, memos);
+    noteList = NoteApplication.getInstance().getNoteDatabase().loadAllParentNote();
+    noteAdapter = new NoteAdapter(this, noteList);
     mainLv = (ListView) findViewById(R.id.memos_lv);
-    mainLv.setAdapter(mainAdapter);
-    memos.add(new Memo("Android", "18/4/2017", 1));
-    memos.add(new Memo("Android", "18/4/2017", 1));
-    memos.add(new Memo("Android", "18/4/2017", 1));
-    memos.add(new Memo("Android", "18/4/2017", 1));
+    mainLv.setAdapter(noteAdapter);
   }
 
   @Override
