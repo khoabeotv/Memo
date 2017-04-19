@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapters.MainAdapter;
-import memo.Memo;
+import model.Memo;
 
 public class MainActivity extends AppCompatActivity {
 

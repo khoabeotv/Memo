@@ -1,4 +1,4 @@
-package memo;
+package model;
 
 import java.util.ArrayList;
 import java.util.List;

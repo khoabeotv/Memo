@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import memo.Memo;
+import model.Memo;
 import teambandau.memo.R;
 
 /**
