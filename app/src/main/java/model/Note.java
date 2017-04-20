@@ -10,13 +10,15 @@ public class Note {
     String icon;
     String color ;
     String content;
+    int id_parent;
 
-    public Note(int id, String title, String icon, String color, String content) {
+    public Note(int id, String title, String icon, String color, String content, int id_parent) {
         this.id = id;
         this.title = title;
         this.icon = icon;
         this.color = color;
         this.content = content;
+        this.id_parent = id_parent;
     }
 
     public int getId() {
@@ -59,4 +61,11 @@ public class Note {
         this.content = content;
     }
 
+    public int getId_parent() {
+        return id_parent;
+    }
+
+    public void setId_parent(int id_parent) {
+        this.id_parent = id_parent;
+    }
 }
