@@ -1,5 +1,7 @@
 package teambandau.memo;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -16,34 +19,39 @@ import java.util.List;
 import adapters.NoteAdapter;
 import application.NoteApplication;
 import model.Note;
+import model.NoteManager;
 
 public class MainActivity extends AppCompatActivity {
 
-  private List<Note> noteList;
-  private NoteAdapter noteAdapter;
-
-  private ListView mainLv;
+  private MainFragment mainFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
 
-    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-      }
-    });
+    mainFragment = new MainFragment();
+    initFragmentStack();
+  }
 
-    noteList = NoteApplication.getInstance().getNoteDatabase().loadAllParentNote();
-    noteAdapter = new NoteAdapter(this, noteList);
-    mainLv = (ListView) findViewById(R.id.memos_lv);
-    mainLv.setAdapter(noteAdapter);
+  @Override
+  public void onBackPressed() {
+    if (NoteManager.getParentId() == 0) {
+      super.onBackPressed();
+    }
+    mainFragment.onBackPressed();
+  }
+
+  private void initFragmentStack() {
+    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+    transaction.add(R.id.activity_main, mainFragment);
+    transaction.commit();
+  }
+
+  public void changeFragmentStack(Fragment fragment) {
+    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+    transaction.show(fragment);
+    transaction.commit();
   }
 
   @Override

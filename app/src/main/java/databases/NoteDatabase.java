@@ -33,13 +33,13 @@ public class NoteDatabase extends SQLiteAssetHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public List<Note> loadAllParentNote() {
+    public List<Note> loadAllNotes() {
         List<Note> nodeList = new ArrayList<>();
 
         SQLiteDatabase db = getReadableDatabase();
 
 //        Cursor cursor = db.rawQuery("SELECT * FROM note WHERE level = 0", null);
-        Cursor cursor = db.query("note", ALL_COLUMN, ID_PARENT + " = ?", new String[]{"0"}, null, null, null);
+        Cursor cursor = db.query("note", ALL_COLUMN, null, null, null, null, null);
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(ID));
             String title = cursor.getString(cursor.getColumnIndex(TITLE));
@@ -51,6 +51,10 @@ public class NoteDatabase extends SQLiteAssetHelper {
             Note note = new Note(id, title, icon, color, content, id_parent);
             nodeList.add(note);
         }
+
+        cursor.close();
+        db.close();
+
         return nodeList;
     }
 }

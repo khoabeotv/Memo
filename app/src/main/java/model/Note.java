@@ -5,20 +5,20 @@ package model;
  */
 
 public class Note {
-    int id;
-    String title;
-    String icon;
-    String color ;
-    String content;
-    int id_parent;
+    private int id;
+    private String title;
+    private String icon;
+    private String color ;
+    private String content;
+    private int idParent;
 
-    public Note(int id, String title, String icon, String color, String content, int id_parent) {
+    public Note(int id, String title, String icon, String color, String content, int idParent) {
         this.id = id;
         this.title = title;
         this.icon = icon;
         this.color = color;
         this.content = content;
-        this.id_parent = id_parent;
+        this.idParent = idParent;
     }
 
     public int getId() {
@@ -61,11 +61,11 @@ public class Note {
         this.content = content;
     }
 
-    public int getId_parent() {
-        return id_parent;
+    public int getIdParent() {
+        return idParent;
     }
 
-    public void setId_parent(int id_parent) {
-        this.id_parent = id_parent;
+    public void setIdParent(int idParent) {
+        this.idParent = idParent;
     }
 }

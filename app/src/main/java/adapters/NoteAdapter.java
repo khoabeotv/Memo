@@ -1,12 +1,14 @@
 package adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.net.URL;
 import java.util.List;
 
 import model.Note;
@@ -26,7 +28,6 @@ public class NoteAdapter extends BaseAdapter {
         this.inflater = LayoutInflater.from(context);
     }
 
-
     @Override
     public int getCount() {
         return notes.size();
@@ -39,7 +40,7 @@ public class NoteAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
