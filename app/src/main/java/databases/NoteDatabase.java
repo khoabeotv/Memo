@@ -91,7 +91,7 @@ public class NoteDatabase extends SQLiteAssetHelper {
 
     public void deleteNote(Note note) {
         SQLiteDatabase db = getWritableDatabase();
-        long r = db.delete("note", "ID = ?", new String[]{note.getId()+""});
+        db.delete("note", "ID = ?", new String[]{note.getId()+""});
         db.close();
     }
 
