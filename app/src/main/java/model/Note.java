@@ -11,14 +11,16 @@ public class Note {
     private String color ;
     private String content;
     private int idParent;
+    private String date;
 
-    public Note(int id, String title, String icon, String color, String content, int idParent) {
+    public Note(int id, String title, String icon, String color, String content, int idParent, String date) {
         this.id = id;
         this.title = title;
         this.icon = icon;
         this.color = color;
         this.content = content;
         this.idParent = idParent;
+        this.date = date;
     }
 
     public int getId() {
@@ -67,5 +69,13 @@ public class Note {
 
     public void setIdParent(int idParent) {
         this.idParent = idParent;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

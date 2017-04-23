@@ -63,7 +63,22 @@ public class NoteDatabase extends SQLiteAssetHelper {
     public void moveNote(Note note, int newID) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("id_parent", newID+"");
-        db.update("note", contentValues, "id = ?", new String[]{note.getId()+""});
+        contentValues.put("id_parent", newID + "");
+        db.update("note", contentValues, "id = ?", new String[]{note.getId() + ""});
+    }
+
+    public void copyNote(Note note, int newID) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+//        contentValues.put("id", note.getId());
+        contentValues.put("title", note.getTitle());
+        contentValues.put("icon", note.getIcon());
+        contentValues.put("color", note.getColor());
+        contentValues.put("content", note.getContent());
+        contentValues.put("date", note.getDate());
+        contentValues.put("id_parent", note.getIdParent());
+
+        db.insert("note", null, contentValues);
+
     }
 }
