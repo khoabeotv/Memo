@@ -46,8 +46,6 @@ public class MainFragment extends Fragment {
   }
 
   private void initView(View view) {
-    Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-    ((MainActivity) getActivity()).setSupportActionBar(toolbar);
 
     FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
     fab.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +74,7 @@ public class MainFragment extends Fragment {
           NoteManager.getCurrentNotesByParentId(note.getIdParent());
         } else {
           tvMyNotes.setTypeface(null, Typeface.NORMAL);
-          tvMyNotes.setTextColor(Color.parseColor("#BDBDBD"));
+          tvMyNotes.setTextColor(Color.parseColor("#9FA8DA"));
           dictNotes.add(note);
           dictAdapter.notifyDataSetChanged();
           if (dictNotes.size() > 1)
@@ -91,7 +89,7 @@ public class MainFragment extends Fragment {
     tvMyNotes.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        tvMyNotes.setTextColor(Color.parseColor("#FFFFFF"));
+        tvMyNotes.setTextColor(Color.parseColor("#3F51B5"));
         tvMyNotes.setTypeface(null, Typeface.BOLD);
         dictNotes.clear();
         NoteManager.getCurrentNotesByParentId(0);
@@ -106,7 +104,7 @@ public class MainFragment extends Fragment {
     if (note != null) {
       int id = note.getIdParent();
       if (id == 0) {
-        tvMyNotes.setTextColor(Color.parseColor("#FFFFFF"));
+        tvMyNotes.setTextColor(Color.parseColor("#3F51B5"));
         tvMyNotes.setTypeface(null, Typeface.BOLD);
       }
       NoteManager.getCurrentNotesByParentId(id);

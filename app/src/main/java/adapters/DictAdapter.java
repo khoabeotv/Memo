@@ -48,11 +48,11 @@ public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder> im
     holder.tvTitle.setText(notes.get(position).getTitle());
     if (position == notes.size() - 1) {
       holder.tvTitle.setTypeface(null, Typeface.BOLD);
-      holder.tvTitle.setTextColor(Color.parseColor("#FFFFFF"));
+      holder.tvTitle.setTextColor(Color.parseColor("#3F51B5"));
       holder.imageView.setVisibility(View.INVISIBLE);
     } else {
       holder.tvTitle.setTypeface(null, Typeface.NORMAL);
-      holder.tvTitle.setTextColor(Color.parseColor("#BDBDBD"));
+      holder.tvTitle.setTextColor(Color.parseColor("#9FA8DA"));
       holder.imageView.setVisibility(View.VISIBLE);
     }
   }
