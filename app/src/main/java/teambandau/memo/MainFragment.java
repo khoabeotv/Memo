@@ -158,9 +158,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
       dictAdapter.notifyDataSetChanged();
       if (dictNotes.size() > 1)
         rvDict.smoothScrollToPosition(dictNotes.size());
+      noteAdapter.notifyDataSetChanged();
     }
     isBack = false;
-    noteAdapter.notifyDataSetChanged();
   }
 
   @Override
