@@ -24,6 +24,10 @@ public class NoteManager {
     return currentNotes;
   }
 
+  public static void reloadAllNotes() {
+    allNotes = NoteApplication.getInstance().getNoteDatabase().loadAllNotes();
+  }
+
   public static List<Note> getCurrentNotes() {
     return currentNotes;
   }

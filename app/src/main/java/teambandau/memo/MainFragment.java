@@ -24,6 +24,7 @@ import java.util.List;
 
 import adapters.DictAdapter;
 import adapters.NoteAdapter;
+import application.NoteApplication;
 import model.Note;
 import model.NoteManager;
 import util.Util;
@@ -50,7 +51,10 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
   private ImageView ivSearch;
   private ImageView ivPaste;
 
+  private Note selectedNote;
   private boolean selectFlag = false;
+  private boolean copyFlag = false;
+  private boolean cutFlag = false;
   private int countExit = 0;
 
   @Nullable
@@ -177,16 +181,26 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
       case R.id.iv_copy:
         //TODO: xu ly copy
         setViewOnPaste();
+        copyFlag = true;
         break;
       case R.id.iv_cut:
         //TODO: xu ly cut
         setViewOnPaste();
+        cutFlag = true;
         break;
       case R.id.iv_delete:
+        NoteApplication.getInstance().getNoteDatabase().deleteNote(selectedNote.getId());
+        reloadAllNotes();
         unSelected();
         //TODO: xu ly delete
         break;
       case R.id.iv_paste:
+        if (copyFlag) {
+          NoteApplication.getInstance().getNoteDatabase().copyNote(selectedNote, NoteManager.getParentId());
+        } else if (cutFlag) {
+          NoteApplication.getInstance().getNoteDatabase().moveNote(selectedNote, NoteManager.getParentId());
+        }
+        reloadAllNotes();
         unSelected();
         //TODO: xu ly paste;
         break;
@@ -196,7 +210,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
   @Override
   public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
     List<Note> notes = NoteManager.getCurrentNotes();
-    Note selectedNote = notes.get(position);
+    selectedNote = notes.get(position);
     for (Note note : NoteManager.getAllNotes()) {
       note.setSelect(false);
     }
@@ -235,14 +249,22 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
   private void unSelected() {
     selectFlag = false;
+    copyFlag = false;
+    cutFlag = false;
     tvTitle.setText(Util.getFullDate());
     for (Note note : NoteManager.getAllNotes()) {
       if (note.isSelect()) {
         note.setSelect(false);
-        noteAdapter.notifyDataSetChanged();
-        setViewOnSelected(false);
         break;
       }
     }
+    noteAdapter.notifyDataSetChanged();
+    setViewOnSelected(false);
+  }
+
+  private void reloadAllNotes() {
+    NoteManager.reloadAllNotes();
+    NoteManager.getCurrentNotesByParentId(NoteManager.getParentId());
+    noteAdapter.notifyDataSetChanged();
   }
 }
