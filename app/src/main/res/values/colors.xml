@@ -5,4 +5,39 @@
     <color name="colorAccent">#FF4081</color>
     <color name="tran">#00ffffff</color>
 
+    <color name="color_warm_0">#ff0505</color>
+    <color name="color_warm_1">#ad0101</color>
+    <color name="color_warm_2">#7a0000</color>
+    <color name="color_warm_3">#8e0b0b</color>
+    <color name="color_warm_4">#db3939</color>
+    <color name="color_warm_5">#c14e2e</color>
+    <color name="color_warm_6">#f94600</color>
+    <color name="color_warm_7">#f95b1d</color>
+    <color name="color_warm_8">#a53408</color>
+    <color name="color_warm_9">#a5071c</color>
+    <color name="color_warm_10">#e20b53</color>
+    <color name="color_warm_11">#e20a96</color>
+    <color name="color_warm_12">#e504f9</color>
+    <color name="color_warm_13">#d003f9</color>
+    <color name="color_warm_14">#a720ea</color>
+    <color name="color_warm_15">#6b33cc</color>
+
+
+    <color name="color_cool_0">#faff00</color>
+    <color name="color_cool_1">#d0ff00</color>
+    <color name="color_cool_2">#376d3c</color>
+    <color name="color_cool_3">#76ff00</color>
+    <color name="color_cool_4">#26ff00</color>
+    <color name="color_cool_5">#00ff55</color>
+    <color name="color_cool_6">#079135</color>
+    <color name="color_cool_7">#02f9a3</color>
+    <color name="color_cool_8">#01d8f9</color>
+    <color name="color_cool_9">#67a7bc</color>
+    <color name="color_cool_10">#01a2f9</color>
+    <color name="color_cool_11">#0160f9</color>
+    <color name="color_cool_12">#0132f9</color>
+    <color name="color_cool_13">#6c01f9</color>
+    <color name="color_cool_14">#6b7008</color>
+    <color name="color_cool_15">#077010</color>
+
 </resources>
