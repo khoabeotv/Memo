@@ -26,8 +26,9 @@ public class NoteAdapter extends BaseAdapter {
     private List<Note> notes;
     private LayoutInflater inflater;
     private boolean[] animationStates;
-
+    Context context;
     public NoteAdapter(Context context, List<Note> memos) {
+        this.context = context;
         this.notes = memos;
         this.inflater = LayoutInflater.from(context);
 
@@ -59,7 +60,8 @@ public class NoteAdapter extends BaseAdapter {
         GradientDrawable bgShape = (GradientDrawable)icon_v.getBackground();
 
         // TODO :
-        bgShape.setColor(Color.BLUE);
+        int idColor  = context.getResources().getIdentifier("colorPrimaryDark", "color", context.getPackageName());
+        bgShape.setColor(context.getResources().getColor(idColor));
 
         if (!animationStates[position]) {
             animationStates[position] = true;
