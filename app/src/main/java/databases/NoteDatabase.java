@@ -57,4 +57,9 @@ public class NoteDatabase extends SQLiteAssetHelper {
 
         return nodeList;
     }
+
+
+    public static void moveNote(){
+        
+    }
 }
