@@ -1,6 +1,8 @@
 package adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +54,13 @@ public class NoteAdapter extends BaseAdapter {
         view = inflater.inflate(R.layout.note_item, null, false);
         TextView tvTitle = (TextView) view.findViewById(R.id.tvTitle);
         TextView tvContent = (TextView) view.findViewById(R.id.tvContent);
+
         View icon_v = view.findViewById(R.id.icon_v);
+        GradientDrawable bgShape = (GradientDrawable)icon_v.getBackground();
+
+        // TODO :
+        bgShape.setColor(Color.BLUE);
+
         if (!animationStates[position]) {
             animationStates[position] = true;
             int typeAnim;
