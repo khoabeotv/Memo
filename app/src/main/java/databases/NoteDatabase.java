@@ -1,5 +1,6 @@
 package databases;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -59,7 +60,10 @@ public class NoteDatabase extends SQLiteAssetHelper {
     }
 
 
-    public static void moveNote(){
-        
+    public void moveNote(Note note, int newID) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id_parent", newID+"");
+        db.update("note", contentValues, "id = ?", new String[]{note.getId()+""});
     }
 }
