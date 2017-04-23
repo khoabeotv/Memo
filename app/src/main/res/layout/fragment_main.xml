@@ -130,6 +130,6 @@
         app:elevation="16dp"
         app:fabSize="normal"
         app:rippleColor="@android:color/holo_red_dark"
-        app:srcCompat="@drawable/add_ic"/>
+        app:srcCompat="@drawable/ic_add_black_24dp"/>
 
 </android.support.design.widget.CoordinatorLayout>
