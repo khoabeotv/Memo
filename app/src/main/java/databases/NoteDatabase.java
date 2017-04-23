@@ -83,16 +83,23 @@ public class NoteDatabase extends SQLiteAssetHelper {
         contentValues.put("color", note.getColor());
         contentValues.put("content", note.getContent());
         contentValues.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
-        contentValues.put("id_parent",newIDParent);
+        contentValues.put("id_parent", newIDParent);
 
         db.insert("note", null, contentValues);
         db.close();
     }
 
-    public void deleteNote(Note note) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete("note", "ID = ?", new String[]{note.getId()+""});
-        db.close();
+    public void deleteNote(int idNote) {
+        SQLiteDatabase db_wr = getWritableDatabase();
+        SQLiteDatabase db_re = getReadableDatabase();
+        db_wr.delete("note", "ID = ?", new String[]{idNote + ""});
+
+        Cursor cursor = db_re.query("note", new String[]{ID}, "id_parent = ?", new String[]{idNote + ""}, null, null, null);
+        while (cursor.moveToNext()) {
+            int idChild = cursor.getInt(cursor.getColumnIndex(ID));
+            db_wr.delete("note", "ID = ?", new String[]{idChild + ""});
+        }
+        db_wr.close();
     }
 
     public void insertNote(Note note) {
