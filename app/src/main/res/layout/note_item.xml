@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:gravity="center"
-              android:padding="25dp"
-              android:orientation="horizontal">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:padding="25dp">
 
-    <View
-        android:id="@+id/icon_v"
+    <RelativeLayout
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginRight="20dp"
-        android:background="@drawable/shape"/>
+        android:background="@color/colorAccent"
+        android:layout_marginRight="20dp">
+        <View
+            android:id="@+id/icon_v"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,19 +25,19 @@
         android:orientation="vertical">
 
         <TextView
-            android:textColor="#000000"
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Title"
-            android:textStyle="bold"
-            android:textSize="16dp"/>
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"
-            android:textSize="12dp"/>
+            android:textSize="12dp" />
     </LinearLayout>
 </LinearLayout>
