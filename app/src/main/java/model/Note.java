@@ -8,19 +8,19 @@ public class Note {
     private int id;
     private String title;
     private String icon;
-    private String color ;
+    private String color;
     private String content;
-    private int idParent;
     private String date;
+    private int idParent;
 
-    public Note(int id, String title, String icon, String color, String content, int idParent, String date) {
+    public Note(int id, String title, String icon, String color, String content, String date, int idParent) {
         this.id = id;
         this.title = title;
         this.icon = icon;
         this.color = color;
         this.content = content;
-        this.idParent = idParent;
         this.date = date;
+        this.idParent = idParent;
     }
 
     public int getId() {
