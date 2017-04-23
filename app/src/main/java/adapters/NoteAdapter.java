@@ -60,7 +60,7 @@ public class NoteAdapter extends BaseAdapter {
         GradientDrawable bgShape = (GradientDrawable)icon_v.getBackground();
 
         // TODO :
-        int idColor  = context.getResources().getIdentifier("colorPrimaryDark", "color", context.getPackageName());
+        int idColor  = context.getResources().getIdentifier(notes.get(position).getColor(), "color", context.getPackageName());
         bgShape.setColor(context.getResources().getColor(idColor));
 
         if (!animationStates[position]) {
