@@ -16,35 +16,50 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay">
-            <ImageView
-                app:srcCompat="@drawable/search_ic"
-                android:padding="15dp"
-                android:layout_gravity="right"
-                android:layout_width="50dp"
-                android:layout_height="50dp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
+                    android:padding="15dp"
+                    app:srcCompat="@drawable/search_ic"/>
+
+                <TextView
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="#FFFF"
+                    android:textSize="15dp"/>
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:background="#FFFF"
                 android:layout_height="wrap_content"
+                android:background="#FFFF"
+                android:gravity="center"
+                android:orientation="horizontal"
                 android:padding="10dp"
                 >
 
                 <TextView
                     android:id="@+id/tv_my_notes"
-                    android:textSize="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="My Notes"
                     android:textColor="@color/colorPrimary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:textSize="15dp"/>
 
                 <ImageView
                     android:id="@+id/im_my_notes_next"
                     android:layout_width="30dp"
-                    app:srcCompat="@drawable/next_ic"
-                    android:layout_height="30dp"/>
+                    android:layout_height="30dp"
+                    app:srcCompat="@drawable/next_ic"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_dict"

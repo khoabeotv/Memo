@@ -23,6 +23,7 @@ import adapters.DictAdapter;
 import adapters.NoteAdapter;
 import model.Note;
 import model.NoteManager;
+import util.Util;
 
 /**
  * Created by KhoaBeo on 4/21/2017.
@@ -36,6 +37,7 @@ public class MainFragment extends Fragment {
   private RecyclerView rvDict;
   private List<Note> dictNotes;
   private TextView tvMyNotes;
+  private TextView tvDate;
 
   @Nullable
   @Override
@@ -55,6 +57,9 @@ public class MainFragment extends Fragment {
                 .setAction("Action", null).show();
       }
     });
+
+    tvDate = (TextView) view.findViewById(R.id.tv_date);
+    tvDate.setText(Util.getFullDate());
 
     noteAdapter = new NoteAdapter(getActivity(), NoteManager.getCurrentNotesByParentId(0));
     mainLv = (ListView) view.findViewById(R.id.memos_lv);
