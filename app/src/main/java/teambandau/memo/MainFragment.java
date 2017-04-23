@@ -6,13 +6,12 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,15 +28,23 @@ import util.Util;
  * Created by KhoaBeo on 4/21/2017.
  */
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener {
 
+  private FloatingActionButton fab;
   private NoteAdapter noteAdapter;
   private ListView mainLv;
   private DictAdapter dictAdapter;
   private RecyclerView rvDict;
   private List<Note> dictNotes;
   private TextView tvMyNotes;
-  private TextView tvDate;
+  private TextView tvTitle;
+  private ImageView ivDelete;
+  private ImageView ivCut;
+  private ImageView ivCopy;
+  private ImageView ivSearch;
+  private ImageView ivPaste;
+
+  private boolean selectFlag = false;
 
   @Nullable
   @Override
@@ -49,17 +56,18 @@ public class MainFragment extends Fragment {
 
   private void initView(View view) {
 
-    FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+    fab = (FloatingActionButton) view.findViewById(R.id.fab);
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        if (selectFlag) {
+          unSelected();
+        }
       }
     });
 
-    tvDate = (TextView) view.findViewById(R.id.tv_date);
-    tvDate.setText(Util.getFullDate());
+    tvTitle = (TextView) view.findViewById(R.id.tv_date);
+    tvTitle.setText(Util.getFullDate());
 
     noteAdapter = new NoteAdapter(getActivity(), NoteManager.getCurrentNotesByParentId(0));
     mainLv = (ListView) view.findViewById(R.id.memos_lv);
@@ -70,41 +78,32 @@ public class MainFragment extends Fragment {
     dictAdapter = new DictAdapter(getActivity(), dictNotes, rvDict, noteAdapter);
     rvDict.setAdapter(dictAdapter);
 
-    mainLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Note note = (Note) mainLv.getAdapter().getItem(position);
-        List<Note> currentNotes = NoteManager.getCurrentNotesByParentId(note.getId());
-        if (currentNotes.size() == 0) {
-          NoteManager.getCurrentNotesByParentId(note.getIdParent());
-        } else {
-          tvMyNotes.setTypeface(null, Typeface.NORMAL);
-          tvMyNotes.setTextColor(Color.parseColor("#9FA8DA"));
-          dictNotes.add(note);
-          dictAdapter.notifyDataSetChanged();
-          if (dictNotes.size() > 1)
-            rvDict.smoothScrollToPosition(dictNotes.size());
-        }
-        noteAdapter.notifyDataSetChanged();
-      }
-    });
+    mainLv.setOnItemClickListener(this);
+    mainLv.setOnItemLongClickListener(this);
 
     tvMyNotes = (TextView) view.findViewById(R.id.tv_my_notes);
     tvMyNotes.setTypeface(null, Typeface.BOLD);
-    tvMyNotes.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        tvMyNotes.setTextColor(Color.parseColor("#3F51B5"));
-        tvMyNotes.setTypeface(null, Typeface.BOLD);
-        dictNotes.clear();
-        NoteManager.getCurrentNotesByParentId(0);
-        noteAdapter.notifyDataSetChanged();
-        dictAdapter.notifyDataSetChanged();
-      }
-    });
+    tvMyNotes.setOnClickListener(this);
+
+    ivCopy = (ImageView) view.findViewById(R.id.iv_copy);
+    ivDelete = (ImageView) view.findViewById(R.id.iv_delete);
+    ivCut = (ImageView) view.findViewById(R.id.iv_cut);
+    ivSearch = (ImageView) view.findViewById(R.id.iv_search);
+    ivPaste = (ImageView) view.findViewById(R.id.iv_paste);
+
+    ivCopy.setOnClickListener(this);
+    ivDelete.setOnClickListener(this);
+    ivCut.setOnClickListener(this);
+    ivSearch.setOnClickListener(this);
+    ivPaste.setOnClickListener(this);
   }
 
   public void onBackPressed() {
+    if (NoteManager.getParentId() == 0) {
+      getActivity().finish();
+      unSelected();
+    }
+
     Note note = NoteManager.findNoteById(((Note) mainLv.getAdapter().getItem(0)).getIdParent());
     if (note != null) {
       int id = note.getIdParent();
@@ -116,6 +115,106 @@ public class MainFragment extends Fragment {
       dictNotes.remove(note);
       dictAdapter.notifyDataSetChanged();
       noteAdapter.notifyDataSetChanged();
+    }
+  }
+
+  @Override
+  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    Note note = (Note) mainLv.getAdapter().getItem(position);
+    List<Note> currentNotes = NoteManager.getCurrentNotesByParentId(note.getId());
+    if (currentNotes.size() == 0) {
+      NoteManager.getCurrentNotesByParentId(note.getIdParent());
+    } else {
+      tvMyNotes.setTypeface(null, Typeface.NORMAL);
+      tvMyNotes.setTextColor(Color.parseColor("#9FA8DA"));
+      dictNotes.add(note);
+      dictAdapter.notifyDataSetChanged();
+      if (dictNotes.size() > 1)
+        rvDict.smoothScrollToPosition(dictNotes.size());
+    }
+    noteAdapter.notifyDataSetChanged();
+  }
+
+  @Override
+  public void onClick(View v) {
+    switch (v.getId()) {
+      case R.id.tv_my_notes:
+        tvMyNotes.setTextColor(Color.parseColor("#3F51B5"));
+        tvMyNotes.setTypeface(null, Typeface.BOLD);
+        dictNotes.clear();
+        NoteManager.getCurrentNotesByParentId(0);
+        noteAdapter.notifyDataSetChanged();
+        dictAdapter.notifyDataSetChanged();
+        break;
+      case R.id.iv_copy:
+        //TODO: xu ly copy
+        setViewOnPaste();
+        break;
+      case R.id.iv_cut:
+        //TODO: xu ly cut
+        setViewOnPaste();
+        break;
+      case R.id.iv_delete:
+        unSelected();
+        //TODO: xu ly delete
+        break;
+      case R.id.iv_paste:
+        unSelected();
+        //TODO: xu ly paste;
+        break;
+    }
+  }
+
+  @Override
+  public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+    List<Note> notes = NoteManager.getCurrentNotes();
+    Note selectedNote = notes.get(position);
+    for (Note note : NoteManager.getAllNotes()) {
+      note.setSelect(false);
+    }
+    selectedNote.setSelect(true);
+    tvTitle.setText(selectedNote.getTitle());
+    noteAdapter.notifyDataSetChanged();
+    selectFlag = true;
+    setViewOnSelected(true);
+
+    return true;
+  }
+
+  private void setViewOnSelected(boolean onSelected) {
+    ivPaste.setVisibility(View.GONE);
+    int type;
+    if (onSelected) {
+      type = View.VISIBLE;
+      ivSearch.setVisibility(View.GONE);
+      fab.setImageResource(R.drawable.cancel_ic);
+    } else {
+      type = View.GONE;
+      ivSearch.setVisibility(View.VISIBLE);
+      fab.setImageResource(R.drawable.add_ic);
+    }
+    ivCut.setVisibility(type);
+    ivCopy.setVisibility(type);
+    ivDelete.setVisibility(type);
+  }
+
+  private void setViewOnPaste() {
+    ivCut.setVisibility(View.GONE);
+    ivCopy.setVisibility(View.GONE);
+    ivDelete.setVisibility(View.GONE);
+    ivPaste.setVisibility(View.VISIBLE);
+  }
+
+  private void unSelected() {
+    selectFlag = false;
+    tvTitle.setText(Util.getFullDate());
+    for (Note note : NoteManager.getAllNotes()) {
+      if (note.isSelect()) {
+        note.setSelect(false);
+        noteAdapter.notifyDataSetChanged();
+        setViewOnSelected(false);
+        break;
+      }
     }
   }
 }

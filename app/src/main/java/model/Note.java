@@ -5,77 +5,87 @@ package model;
  */
 
 public class Note {
-    private int id;
-    private String title;
-    private String icon;
-    private String color;
-    private String content;
-    private String date;
-    private int idParent;
+  private int id;
+  private String title;
+  private String icon;
+  private String color;
+  private String content;
+  private String date;
+  private int idParent;
+  private boolean select;
 
-    public Note(int id, String title, String icon, String color, String content, String date, int idParent) {
-        this.id = id;
-        this.title = title;
-        this.icon = icon;
-        this.color = color;
-        this.content = content;
-        this.date = date;
-        this.idParent = idParent;
-    }
+  public Note(int id, String title, String icon, String color, String content, String date, int idParent) {
+    this.id = id;
+    this.title = title;
+    this.icon = icon;
+    this.color = color;
+    this.content = content;
+    this.date = date;
+    this.idParent = idParent;
+    this.select = false;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public boolean isSelect() {
+    return select;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public void setSelect(boolean select) {
+    this.select = select;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public String getIcon() {
-        return icon;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public String getColor() {
-        return color;
-    }
+  public String getIcon() {
+    return icon;
+  }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
+  public void setIcon(String icon) {
+    this.icon = icon;
+  }
 
-    public String getContent() {
-        return content;
-    }
+  public String getColor() {
+    return color;
+  }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+  public void setColor(String color) {
+    this.color = color;
+  }
 
-    public int getIdParent() {
-        return idParent;
-    }
+  public String getContent() {
+    return content;
+  }
 
-    public void setIdParent(int idParent) {
-        this.idParent = idParent;
-    }
+  public void setContent(String content) {
+    this.content = content;
+  }
 
-    public String getDate() {
-        return date;
-    }
+  public int getIdParent() {
+    return idParent;
+  }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
+  public void setIdParent(int idParent) {
+    this.idParent = idParent;
+  }
+
+  public String getDate() {
+    return date;
+  }
+
+  public void setDate(String date) {
+    this.date = date;
+  }
 }

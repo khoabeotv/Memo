@@ -36,9 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
-    if (NoteManager.getParentId() == 0) {
-      super.onBackPressed();
-    }
     mainFragment.onBackPressed();
   }
 

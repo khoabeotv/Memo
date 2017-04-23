@@ -24,6 +24,14 @@ public class NoteManager {
     return currentNotes;
   }
 
+  public static List<Note> getCurrentNotes() {
+    return currentNotes;
+  }
+
+  public static List<Note> getAllNotes() {
+    return allNotes;
+  }
+
   public static int getParentId() {
     return currentNotes.get(0).getIdParent();
   }

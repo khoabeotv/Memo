@@ -22,20 +22,58 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/iv_search"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
+                    android:padding="10dp"
+                    app:srcCompat="@drawable/search_ic"/>
+
+                <ImageView
+                    android:id="@+id/iv_paste"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_alignParentRight="true"
                     android:padding="15dp"
-                    app:srcCompat="@drawable/search_ic"/>
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/paste_ic"/>
+
+                <ImageView
+                    android:id="@+id/iv_delete"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
+                    android:padding="15dp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/delete_ic"/>
+
+                <ImageView
+                    android:id="@+id/iv_cut"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_toLeftOf="@id/iv_delete"
+                    android:padding="15dp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/cut_ic"/>
+
+                <ImageView
+                    android:id="@+id/iv_copy"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="15dp"
+                    android:visibility="gone"
+                    android:layout_toLeftOf="@id/iv_cut"
+                    app:srcCompat="@drawable/copy_ic"/>
 
                 <TextView
-                    android:layout_marginLeft="10dp"
                     android:id="@+id/tv_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
                     android:textColor="#FFFF"
                     android:textSize="15dp"/>
+
             </RelativeLayout>
 
             <LinearLayout

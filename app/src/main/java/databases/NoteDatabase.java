@@ -31,7 +31,7 @@ public class NoteDatabase extends SQLiteAssetHelper {
     private static final String DATE = "date";
     private static final String ID_PARENT = "id_parent";
 
-    private static final String[] ALL_COLUMN = {ID, TITLE, ICON, COLOR, CONTENT, ID_PARENT};
+    private static final String[] ALL_COLUMN = {ID, TITLE, ICON, COLOR, CONTENT, DATE, ID_PARENT};
 
     public NoteDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
