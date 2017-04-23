@@ -86,15 +86,28 @@ public class NoteDatabase extends SQLiteAssetHelper {
         contentValues.put("id_parent", newIDParent);
 
         db.insert("note", null, contentValues);
+
+        Cursor cursor = getCursorOfChild(note.getId());
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(ID));
+            String title = cursor.getString(cursor.getColumnIndex(TITLE));
+            String icon = cursor.getString(cursor.getColumnIndex(ICON));
+            String color = cursor.getString(cursor.getColumnIndex(COLOR));
+            String content = cursor.getString(cursor.getColumnIndex(CONTENT));
+            String date = cursor.getString(cursor.getColumnIndex(DATE));
+            int id_parent = cursor.getInt(cursor.getColumnIndex(ID_PARENT));
+
+            Note noteChild = new Note(id, title, icon, color, content, date, id_parent);
+            copyNote(noteChild, noteChild.getIdParent());
+        }
         db.close();
     }
 
     public void deleteNote(int idNote) {
         SQLiteDatabase db_wr = getWritableDatabase();
-        SQLiteDatabase db_re = getReadableDatabase();
         db_wr.delete("note", "ID = ?", new String[]{idNote + ""});
 
-        Cursor cursor = db_re.query("note", new String[]{ID}, "id_parent = ?", new String[]{idNote + ""}, null, null, null);
+        Cursor cursor = getCursorOfChild(idNote);
         while (cursor.moveToNext()) {
             int idChild = cursor.getInt(cursor.getColumnIndex(ID));
             db_wr.delete("note", "ID = ?", new String[]{idChild + ""});
@@ -118,4 +131,12 @@ public class NoteDatabase extends SQLiteAssetHelper {
         db.insert("note", null, contentValues);
         db.close();
     }
+
+    public Cursor getCursorOfChild(int idNote) {
+        SQLiteDatabase db_re = getReadableDatabase();
+        Cursor cursor = db_re.query("note", ALL_COLUMN, "id_parent = ?", new String[]{idNote + ""}, null, null, null);
+        db_re.close();
+        return cursor;
+    }
+
 }
