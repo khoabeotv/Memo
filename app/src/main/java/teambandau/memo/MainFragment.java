@@ -1,12 +1,15 @@
 package teambandau.memo;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +34,8 @@ import util.Util;
 
 public class MainFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener {
 
+  public static boolean isBack;
+
   private FloatingActionButton fab;
   private NoteAdapter noteAdapter;
   private ListView mainLv;
@@ -45,6 +51,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
   private ImageView ivPaste;
 
   private boolean selectFlag = false;
+  private int countExit = 0;
 
   @Nullable
   @Override
@@ -100,10 +107,30 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
   public void onBackPressed() {
     if (NoteManager.getParentId() == 0) {
-      getActivity().finish();
-      unSelected();
+      if (countExit == 0) {
+        countExit++;
+        Toast.makeText(getActivity(), "Press back again to exit", Toast.LENGTH_SHORT).show();
+        CountDownTimer countDownTimer = new CountDownTimer(2000, 1000) {
+          @Override
+          public void onTick(long millisUntilFinished) {
+
+          }
+
+          @Override
+          public void onFinish() {
+            countExit = 0;
+          }
+        };
+        countDownTimer.start();
+        return;
+      }
+      if (countExit == 1) {
+        getActivity().finish();
+        unSelected();
+      }
     }
 
+    isBack = true;
     Note note = NoteManager.findNoteById(((Note) mainLv.getAdapter().getItem(0)).getIdParent());
     if (note != null) {
       int id = note.getIdParent();
@@ -132,6 +159,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
       if (dictNotes.size() > 1)
         rvDict.smoothScrollToPosition(dictNotes.size());
     }
+    isBack = false;
     noteAdapter.notifyDataSetChanged();
   }
 

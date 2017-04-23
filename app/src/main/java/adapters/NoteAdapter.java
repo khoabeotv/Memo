@@ -1,17 +1,18 @@
 package adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.net.URL;
 import java.util.List;
 
 import model.Note;
+import teambandau.memo.MainFragment;
 import teambandau.memo.R;
 
 /**
@@ -22,10 +23,12 @@ public class NoteAdapter extends BaseAdapter {
 
   private List<Note> notes;
   private LayoutInflater inflater;
+  private boolean[] animationStates;
 
   public NoteAdapter(Context context, List<Note> memos) {
     this.notes = memos;
     this.inflater = LayoutInflater.from(context);
+
   }
 
   @Override
@@ -45,15 +48,27 @@ public class NoteAdapter extends BaseAdapter {
 
   @Override
   public View getView(int position, View view, ViewGroup parent) {
+    animationStates = new boolean[notes.size()];
     view = inflater.inflate(R.layout.note_item, null, false);
     TextView tvTitle = (TextView) view.findViewById(R.id.tvTitle);
     TextView tvContent = (TextView) view.findViewById(R.id.tvContent);
+    if (!animationStates[position]) {
+      animationStates[position] = true;
+      int typeAnim;
+      if (MainFragment.isBack) {
+        typeAnim = R.anim.left_to_right;
+      } else {
+        typeAnim = R.anim.right_to_left;
+      }
+      Animation animation = AnimationUtils.loadAnimation(parent.getContext(), typeAnim);
+      animation.setStartOffset(0);
+      view.startAnimation(animation);
+    }
 
     tvTitle.setText(notes.get(position).getTitle());
     tvContent.setText(notes.get(position).getContent());
 
     if (notes.get(position).isSelect()) {
-      Log.d("dddddd","zzzzzzzzz");
       view.setBackgroundResource(android.R.color.holo_blue_bright);
     }
 
