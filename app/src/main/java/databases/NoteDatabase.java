@@ -72,7 +72,30 @@ public class NoteDatabase extends SQLiteAssetHelper {
         db.close();
     }
 
-    public void copyNote(Note note, int newID) {
+    public void copyNote(Note note, int newIDParent) {
+        SQLiteDatabase db = getWritableDatabase();
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+
+        ContentValues contentValues = new ContentValues();
+//        contentValues.put("id", note.getId());
+        contentValues.put("title", note.getTitle());
+        contentValues.put("icon", note.getIcon());
+        contentValues.put("color", note.getColor());
+        contentValues.put("content", note.getContent());
+        contentValues.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
+        contentValues.put("id_parent",newIDParent);
+
+        db.insert("note", null, contentValues);
+        db.close();
+    }
+
+    public void deleteNote(Note note) {
+        SQLiteDatabase db = getWritableDatabase();
+        long r = db.delete("note", "ID = ?", new String[]{note.getId()+""});
+        db.close();
+    }
+
+    public void insertNote(Note note) {
         SQLiteDatabase db = getWritableDatabase();
         SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
 
@@ -88,12 +111,4 @@ public class NoteDatabase extends SQLiteAssetHelper {
         db.insert("note", null, contentValues);
         db.close();
     }
-
-    public void daleteNote(Note note) {
-        SQLiteDatabase db = getWritableDatabase();
-        long r = db.delete("note", "ID = ?", new String[]{note.getId()+""});
-        db.close();
-    }
-
-    
 }
