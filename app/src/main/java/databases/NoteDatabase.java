@@ -20,124 +20,124 @@ import model.Note;
 
 public class NoteDatabase extends SQLiteAssetHelper {
 
-  private static final String DATABASE_NAME = "note.db";
-  private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "note.db";
+    private static final int DATABASE_VERSION = 1;
 
-  private static final String ID = "id";
-  private static final String TITLE = "title";
-  private static final String ICON = "icon";
-  private static final String COLOR = "color";
-  private static final String CONTENT = "content";
-  private static final String DATE = "date";
-  private static final String ID_PARENT = "id_parent";
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String ICON = "icon";
+    private static final String COLOR = "color";
+    private static final String CONTENT = "content";
+    private static final String DATE = "date";
+    private static final String ID_PARENT = "id_parent";
 
-  private static final String[] ALL_COLUMN = {ID, TITLE, ICON, COLOR, CONTENT, DATE, ID_PARENT};
+    private static final String[] ALL_COLUMN = {ID, TITLE, ICON, COLOR, CONTENT, DATE, ID_PARENT};
 
-  public NoteDatabase(Context context) {
-    super(context, DATABASE_NAME, null, DATABASE_VERSION);
-  }
+    public NoteDatabase(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
 
-  public List<Note> loadAllNotes() {
-    List<Note> nodeList = new ArrayList<>();
+    public List<Note> loadAllNotes() {
+        List<Note> nodeList = new ArrayList<>();
 
-    SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
 
 //        Cursor cursor = db.rawQuery("SELECT * FROM note WHERE level = 0", null);
-    Cursor cursor = db.query("note", ALL_COLUMN, null, null, null, null, null);
-    while (cursor.moveToNext()) {
-      int id = cursor.getInt(cursor.getColumnIndex(ID));
-      String title = cursor.getString(cursor.getColumnIndex(TITLE));
-      String icon = cursor.getString(cursor.getColumnIndex(ICON));
-      String color = cursor.getString(cursor.getColumnIndex(COLOR));
-      String content = cursor.getString(cursor.getColumnIndex(CONTENT));
-      String date = cursor.getString(cursor.getColumnIndex(DATE));
-      int id_parent = cursor.getInt(cursor.getColumnIndex(ID_PARENT));
+        Cursor cursor = db.query("note", ALL_COLUMN, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(ID));
+            String title = cursor.getString(cursor.getColumnIndex(TITLE));
+            String icon = cursor.getString(cursor.getColumnIndex(ICON));
+            String color = cursor.getString(cursor.getColumnIndex(COLOR));
+            String content = cursor.getString(cursor.getColumnIndex(CONTENT));
+            String date = cursor.getString(cursor.getColumnIndex(DATE));
+            int id_parent = cursor.getInt(cursor.getColumnIndex(ID_PARENT));
 
-      Note note = new Note(id, title, icon, color, content, date, id_parent);
-      nodeList.add(note);
+            Note note = new Note(id, title, icon, color, content, date, id_parent);
+            nodeList.add(note);
+        }
+
+        cursor.close();
+        // db.close();
+
+        return nodeList;
     }
 
-    cursor.close();
-   // db.close();
 
-    return nodeList;
-  }
+    public void moveNote(Note note, int newID) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id_parent", newID + "");
+        db.update("note", contentValues, "id = ?", new String[]{note.getId() + ""});
+        // db.close();
+    }
 
+    public void copyNote(Note note, int newIDParent) {
+        SQLiteDatabase db = getWritableDatabase();
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
 
-  public void moveNote(Note note, int newID) {
-    SQLiteDatabase db = getWritableDatabase();
-    ContentValues contentValues = new ContentValues();
-    contentValues.put("id_parent", newID + "");
-    db.update("note", contentValues, "id = ?", new String[]{note.getId() + ""});
-   // db.close();
-  }
-
-  public void copyNote(Note note, int newIDParent) {
-    SQLiteDatabase db = getWritableDatabase();
-    SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
-
-    ContentValues contentValues = new ContentValues();
+        ContentValues contentValues = new ContentValues();
 //        contentValues.put("id", note.getId());
-    contentValues.put("title", note.getTitle());
-    contentValues.put("icon", note.getIcon());
-    contentValues.put("color", note.getColor());
-    contentValues.put("content", note.getContent());
-    contentValues.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
-    contentValues.put("id_parent", newIDParent);
+        contentValues.put("title", note.getTitle());
+        contentValues.put("icon", note.getIcon());
+        contentValues.put("color", note.getColor());
+        contentValues.put("content", note.getContent());
+        contentValues.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
+        contentValues.put("id_parent", newIDParent);
 
-    db.insert("note", null, contentValues);
+        long newID = db.insert("note", null, contentValues);
 
-    Cursor cursor = getCursorOfChild(note.getId());
-    while (cursor.moveToNext()) {
-      int id = cursor.getInt(cursor.getColumnIndex(ID));
-      String title = cursor.getString(cursor.getColumnIndex(TITLE));
-      String icon = cursor.getString(cursor.getColumnIndex(ICON));
-      String color = cursor.getString(cursor.getColumnIndex(COLOR));
-      String content = cursor.getString(cursor.getColumnIndex(CONTENT));
-      String date = cursor.getString(cursor.getColumnIndex(DATE));
-      int id_parent = cursor.getInt(cursor.getColumnIndex(ID_PARENT));
+        Cursor cursor = getCursorOfChild(note.getId());
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(ID));
+            String title = cursor.getString(cursor.getColumnIndex(TITLE));
+            String icon = cursor.getString(cursor.getColumnIndex(ICON));
+            String color = cursor.getString(cursor.getColumnIndex(COLOR));
+            String content = cursor.getString(cursor.getColumnIndex(CONTENT));
+            String date = cursor.getString(cursor.getColumnIndex(DATE));
+            int id_parent = cursor.getInt(cursor.getColumnIndex(ID_PARENT));
 
-      Note noteChild = new Note(id, title, icon, color, content, date, id_parent);
-      copyNote(noteChild, noteChild.getIdParent());
-    }
-   // db.close();
-  }
-
-  public void deleteNote(int idNote) {
-    SQLiteDatabase db_wr = getWritableDatabase();
-
-    Cursor cursor = getCursorOfChild(idNote);
-    while (cursor.moveToNext()) {
-      int idChild = cursor.getInt(cursor.getColumnIndex(ID));
-      deleteNote(idChild);
+            Note noteChild = new Note(id, title, icon, color, content, date, id_parent);
+            copyNote(noteChild,(int) newID);
+        }
+        // db.close();
     }
 
-    db_wr.delete("note", "ID = ?", new String[]{idNote + ""});
-    //db_wr.close();
-  }
+    public void deleteNote(int idNote) {
+        SQLiteDatabase db_wr = getWritableDatabase();
 
-  public void insertNote(Note note) {
-    SQLiteDatabase db = getWritableDatabase();
-    SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+        Cursor cursor = getCursorOfChild(idNote);
+        while (cursor.moveToNext()) {
+            int idChild = cursor.getInt(cursor.getColumnIndex(ID));
+            deleteNote(idChild);
+        }
 
-    ContentValues contentValues = new ContentValues();
+        db_wr.delete("note", "ID = ?", new String[]{idNote + ""});
+        //db_wr.close();
+    }
+
+    public void insertNote(Note note) {
+        SQLiteDatabase db = getWritableDatabase();
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+
+        ContentValues contentValues = new ContentValues();
 //        contentValues.put("id", note.getId());
-    contentValues.put("title", note.getTitle());
-    contentValues.put("icon", note.getIcon());
-    contentValues.put("color", note.getColor());
-    contentValues.put("content", note.getContent());
-    contentValues.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
-    contentValues.put("id_parent", note.getIdParent());
+        contentValues.put("title", note.getTitle());
+        contentValues.put("icon", note.getIcon());
+        contentValues.put("color", note.getColor());
+        contentValues.put("content", note.getContent());
+        contentValues.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
+        contentValues.put("id_parent", note.getIdParent());
 
-    db.insert("note", null, contentValues);
-    //db.close();
-  }
+        db.insert("note", null, contentValues);
+        //db.close();
+    }
 
-  public Cursor getCursorOfChild(int idNote) {
-    SQLiteDatabase db_re = getReadableDatabase();
-    Cursor cursor = db_re.query("note", ALL_COLUMN, "id_parent = ?", new String[]{idNote + ""}, null, null, null);
-    //db_re.close();
-    return cursor;
-  }
+    public Cursor getCursorOfChild(int idNote) {
+        SQLiteDatabase db_re = getReadableDatabase();
+        Cursor cursor = db_re.query("note", ALL_COLUMN, "id_parent = ?", new String[]{idNote + ""}, null, null, null);
+        //db_re.close();
+        return cursor;
+    }
 
 }

@@ -7,14 +7,13 @@
     android:padding="25dp">
 
     <RelativeLayout
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="@color/colorAccent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginRight="20dp">
         <View
             android:id="@+id/icon_v"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@drawable/shape" />
     </RelativeLayout>
 
