@@ -15,6 +15,7 @@ import java.util.List;
 
 import model.Note;
 import model.NoteManager;
+import teambandau.memo.MainActivity;
 import teambandau.memo.MainFragment;
 import teambandau.memo.R;
 
@@ -28,12 +29,14 @@ public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder> im
   private List<Note> notes;
   private LayoutInflater inflater;
   private NoteAdapter noteAdapter;
+  private TextView tvInBlank;
 
-  public DictAdapter(Context context, List<Note> memos, RecyclerView recyclerView, NoteAdapter noteAdapter) {
+  public DictAdapter(Context context, List<Note> memos, RecyclerView recyclerView, NoteAdapter noteAdapter, TextView textView) {
     this.notes = memos;
     this.noteAdapter = noteAdapter;
     this.inflater = LayoutInflater.from(context);
     this.recyclerView = recyclerView;
+    this.tvInBlank = textView;
   }
 
   @Override
@@ -66,14 +69,17 @@ public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder> im
   @Override
   public void onClick(View v) {
     int itemPosition = recyclerView.getChildLayoutPosition(v);
-    for (int i = itemPosition + 1; i < notes.size(); i++) {
-      notes.remove(i);
-      i--;
+    if (itemPosition != notes.size() - 1) {
+      for (int i = itemPosition + 1; i < notes.size(); i++) {
+        notes.remove(i);
+        i--;
+      }
+      tvInBlank.setVisibility(View.GONE);
+      NoteManager.setCurrentNotesByParentId(notes.get(itemPosition).getId());
+      notifyDataSetChanged();
+      noteAdapter.notifyDataSetChanged();
+      MainFragment.isBack = true;
     }
-    NoteManager.setCurrentNotesByParentId(notes.get(itemPosition).getId());
-    notifyDataSetChanged();
-    noteAdapter.notifyDataSetChanged();
-    MainFragment.isBack = true;
   }
 
   public class ViewHolder extends RecyclerView.ViewHolder {

@@ -88,7 +88,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
     dictNotes = new ArrayList<>();
     rvDict = (RecyclerView) view.findViewById(R.id.rv_dict);
-    dictAdapter = new DictAdapter(getActivity(), dictNotes, rvDict, noteAdapter);
+    dictAdapter = new DictAdapter(getActivity(), dictNotes, rvDict, noteAdapter, tvInBlank);
     rvDict.setAdapter(dictAdapter);
 
     mainLv.setOnItemClickListener(this);
