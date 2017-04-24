@@ -1,7 +1,6 @@
 package teambandau.memo;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -50,8 +49,10 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
   private ImageView ivCopy;
   private ImageView ivSearch;
   private ImageView ivPaste;
+  private TextView tvInBlank;
 
   private Note selectedNote;
+  private View selectedView;
   private boolean selectFlag = false;
   private boolean copyFlag = false;
   private boolean cutFlag = false;
@@ -77,10 +78,11 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
       }
     });
 
+    tvInBlank = (TextView) view.findViewById(R.id.tv_in_blank);
     tvTitle = (TextView) view.findViewById(R.id.tv_date);
     tvTitle.setText(Util.getFullDate());
-
-    noteAdapter = new NoteAdapter(getActivity(), NoteManager.getCurrentNotesByParentId(0));
+    NoteManager.setCurrentNotesByParentId(0);
+    noteAdapter = new NoteAdapter(getActivity(), NoteManager.getCurrentNotes());
     mainLv = (ListView) view.findViewById(R.id.memos_lv);
     mainLv.setAdapter(noteAdapter);
 
@@ -134,36 +136,30 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
       }
     }
 
-    isBack = true;
-    Note note = NoteManager.findNoteById(((Note) mainLv.getAdapter().getItem(0)).getIdParent());
+
+    Note note = dictNotes.get(dictNotes.size() - 1);
+
     if (note != null) {
       int id = note.getIdParent();
       if (id == 0) {
         tvMyNotes.setTextColor(Color.parseColor("#3F51B5"));
         tvMyNotes.setTypeface(null, Typeface.BOLD);
       }
-      NoteManager.getCurrentNotesByParentId(id);
+      setCurrentNotesByParentId(id);
       dictNotes.remove(note);
-      dictAdapter.notifyDataSetChanged();
-      noteAdapter.notifyDataSetChanged();
     }
+    isBack = true;
   }
 
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     Note note = (Note) mainLv.getAdapter().getItem(position);
-    List<Note> currentNotes = NoteManager.getCurrentNotesByParentId(note.getId());
-    if (currentNotes.size() == 0) {
-      NoteManager.getCurrentNotesByParentId(note.getIdParent());
-    } else {
-      tvMyNotes.setTypeface(null, Typeface.NORMAL);
-      tvMyNotes.setTextColor(Color.parseColor("#9FA8DA"));
-      dictNotes.add(note);
-      dictAdapter.notifyDataSetChanged();
-      if (dictNotes.size() > 1)
-        rvDict.smoothScrollToPosition(dictNotes.size());
-      noteAdapter.notifyDataSetChanged();
-    }
+    setCurrentNotesByParentId(note.getId());
+    tvMyNotes.setTypeface(null, Typeface.NORMAL);
+    tvMyNotes.setTextColor(Color.parseColor("#9FA8DA"));
+    dictNotes.add(note);
+    if (dictNotes.size() > 1)
+      rvDict.smoothScrollToPosition(dictNotes.size());
     isBack = false;
   }
 
@@ -174,25 +170,20 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
         tvMyNotes.setTextColor(Color.parseColor("#3F51B5"));
         tvMyNotes.setTypeface(null, Typeface.BOLD);
         dictNotes.clear();
-        NoteManager.getCurrentNotesByParentId(0);
-        noteAdapter.notifyDataSetChanged();
-        dictAdapter.notifyDataSetChanged();
+        setCurrentNotesByParentId(0);
+        isBack = true;
         break;
       case R.id.iv_copy:
-        //TODO: xu ly copy
         setViewOnPaste();
         copyFlag = true;
         break;
       case R.id.iv_cut:
-        //TODO: xu ly cut
         setViewOnPaste();
         cutFlag = true;
         break;
       case R.id.iv_delete:
         NoteApplication.getInstance().getNoteDatabase().deleteNote(selectedNote.getId());
-        reloadAllNotes();
-        unSelected();
-        //TODO: xu ly delete
+        reloadAllNotes(NoteManager.getParentId());
         break;
       case R.id.iv_paste:
         if (copyFlag) {
@@ -200,23 +191,20 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
         } else if (cutFlag) {
           NoteApplication.getInstance().getNoteDatabase().moveNote(selectedNote, NoteManager.getParentId());
         }
-        reloadAllNotes();
-        unSelected();
-        //TODO: xu ly paste;
+        reloadAllNotes(NoteManager.getParentId());
         break;
     }
   }
 
   @Override
   public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+    if (selectedView != null)
+      selectedView.setBackgroundResource(android.R.color.white);
+    selectedView = view;
+    selectedView.setBackgroundResource(android.R.color.holo_blue_bright);
     List<Note> notes = NoteManager.getCurrentNotes();
     selectedNote = notes.get(position);
-    for (Note note : NoteManager.getAllNotes()) {
-      note.setSelect(false);
-    }
-    selectedNote.setSelect(true);
     tvTitle.setText(selectedNote.getTitle());
-    noteAdapter.notifyDataSetChanged();
     selectFlag = true;
     setViewOnSelected(true);
 
@@ -252,19 +240,24 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
     copyFlag = false;
     cutFlag = false;
     tvTitle.setText(Util.getFullDate());
-    for (Note note : NoteManager.getAllNotes()) {
-      if (note.isSelect()) {
-        note.setSelect(false);
-        break;
-      }
-    }
-    noteAdapter.notifyDataSetChanged();
+    selectedView.setBackgroundResource(android.R.color.white);
     setViewOnSelected(false);
   }
 
-  private void reloadAllNotes() {
+  private void reloadAllNotes(int idParent) {
     NoteManager.reloadAllNotes();
-    NoteManager.getCurrentNotesByParentId(NoteManager.getParentId());
+    setCurrentNotesByParentId(idParent);
+    unSelected();
+  }
+
+  private void setCurrentNotesByParentId(int parentId) {
+    NoteManager.setCurrentNotesByParentId(parentId);
+    if (NoteManager.getCurrentNotes().size() == 0) {
+      tvInBlank.setVisibility(View.VISIBLE);
+    } else {
+      tvInBlank.setVisibility(View.GONE);
+    }
     noteAdapter.notifyDataSetChanged();
+    dictAdapter.notifyDataSetChanged();
   }
 }

@@ -69,10 +69,6 @@ public class NoteAdapter extends BaseAdapter {
         tvTitle.setText(notes.get(position).getTitle());
         tvContent.setText(notes.get(position).getContent());
 
-        if (notes.get(position).isSelect()) {
-            view.setBackgroundResource(android.R.color.holo_blue_bright);
-        }
-
         return view;
     }
 }

@@ -15,6 +15,7 @@ import java.util.List;
 
 import model.Note;
 import model.NoteManager;
+import teambandau.memo.MainFragment;
 import teambandau.memo.R;
 
 /**
@@ -69,9 +70,10 @@ public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder> im
       notes.remove(i);
       i--;
     }
-    NoteManager.getCurrentNotesByParentId(notes.get(itemPosition).getId());
+    NoteManager.setCurrentNotesByParentId(notes.get(itemPosition).getId());
     notifyDataSetChanged();
     noteAdapter.notifyDataSetChanged();
+    MainFragment.isBack = true;
   }
 
   public class ViewHolder extends RecyclerView.ViewHolder {

@@ -12,7 +12,6 @@ public class Note {
   private String content;
   private String date;
   private int idParent;
-  private boolean select;
 
   public Note(int id, String title, String icon, String color, String content, String date, int idParent) {
     this.id = id;
@@ -22,16 +21,8 @@ public class Note {
     this.content = content;
     this.date = date;
     this.idParent = idParent;
-    this.select = false;
   }
 
-  public boolean isSelect() {
-    return select;
-  }
-
-  public void setSelect(boolean select) {
-    this.select = select;
-  }
 
   public int getId() {
     return id;

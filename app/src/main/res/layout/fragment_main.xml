@@ -109,9 +109,19 @@
             </LinearLayout>
         </android.support.design.widget.AppBarLayout>
 
+        <TextView
+            android:background="#FFFF"
+            android:id="@+id/tv_in_blank"
+            android:gravity="center"
+            android:text="Press the plus button to add a new note"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:textSize="15dp"/>
 
         <ListView
             android:id="@+id/memos_lv"
+            android:background="#FFFF"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@null"
