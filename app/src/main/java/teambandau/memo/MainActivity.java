@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
     mainFragment = new MainFragment();
     initFragmentStack();
+
+
   }
 
   @Override
