@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
@@ -56,7 +57,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
   private boolean selectFlag = false;
   private boolean copyFlag = false;
   private boolean cutFlag = false;
-  private int countExit = 0;
+  private boolean doublePressBack = false;
 
   @Nullable
   @Override
@@ -67,7 +68,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
   }
 
   private void initView(View view) {
-
     fab = (FloatingActionButton) view.findViewById(R.id.fab);
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -90,6 +90,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
     rvDict = (RecyclerView) view.findViewById(R.id.rv_dict);
     dictAdapter = new DictAdapter(getActivity(), dictNotes, rvDict, noteAdapter, tvInBlank);
     rvDict.setAdapter(dictAdapter);
+    rvDict.setOnClickListener(this);
 
     mainLv.setOnItemClickListener(this);
     mainLv.setOnItemLongClickListener(this);
@@ -112,33 +113,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
   }
 
   public void onBackPressed() {
-    if (NoteManager.getParentId() == 0) {
-      if (countExit == 0) {
-        countExit++;
-        Toast.makeText(getActivity(), "Press back again to exit", Toast.LENGTH_SHORT).show();
-        CountDownTimer countDownTimer = new CountDownTimer(2000, 1000) {
-          @Override
-          public void onTick(long millisUntilFinished) {
-
-          }
-
-          @Override
-          public void onFinish() {
-            countExit = 0;
-          }
-        };
-        countDownTimer.start();
-        return;
-      }
-      if (countExit == 1) {
-        getActivity().finish();
-        unSelected();
-      }
-    }
-
-
     Note note = dictNotes.get(dictNotes.size() - 1);
-
     if (note != null) {
       int id = note.getIdParent();
       if (id == 0) {
