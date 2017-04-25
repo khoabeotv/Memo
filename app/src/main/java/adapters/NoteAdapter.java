@@ -1,7 +1,6 @@
 package adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import model.Note;
-import teambandau.memo.MainFragment;
+import teambandau.memo.MainActivity;
 import teambandau.memo.R;
 
 /**
@@ -63,7 +62,7 @@ public class NoteAdapter extends BaseAdapter {
     bgShape.setColor(context.getResources().getColor(idColor));
 
     int typeAnim;
-    if (MainFragment.isBack) {
+    if (MainActivity.isBack) {
       typeAnim = R.anim.left_to_right;
     } else {
       typeAnim = R.anim.right_to_left;
