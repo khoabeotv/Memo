@@ -77,7 +77,7 @@ public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder> im
       NoteManager.setCurrentNotesByParentId(notes.get(itemPosition).getId());
       notifyDataSetChanged();
       noteAdapter.notifyDataSetChanged();
-      MainActivity.isBack = true;
+      noteAdapter.setAnimation(NoteAdapter.ANIM_LTR);
     }
   }
 

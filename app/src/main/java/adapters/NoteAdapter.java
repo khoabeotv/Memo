@@ -22,14 +22,19 @@ import teambandau.memo.R;
 
 public class NoteAdapter extends BaseAdapter {
 
+  public static final String ANIM_LTR = "left_to_right";
+  public static final String ANIM_RTL = "right_to_left";
+
   private List<Note> notes;
   private LayoutInflater inflater;
   private Context context;
+  private int animType;
 
   public NoteAdapter(Context context, List<Note> memos) {
     this.context = context;
     this.notes = memos;
     this.inflater = LayoutInflater.from(context);
+    this.animType = R.anim.right_to_left;
   }
 
   @Override
@@ -47,6 +52,17 @@ public class NoteAdapter extends BaseAdapter {
     return position;
   }
 
+  public void setAnimation(String animationType) {
+    switch (animationType) {
+      case ANIM_LTR:
+        animType = R.anim.left_to_right;
+        break;
+      case ANIM_RTL:
+        animType = R.anim.right_to_left;
+        break;
+    }
+  }
+
   @Override
   public View getView(int position, View view, ViewGroup parent) {
 
@@ -61,16 +77,9 @@ public class NoteAdapter extends BaseAdapter {
     int idColor = context.getResources().getIdentifier(notes.get(position).getColor(), "color", context.getPackageName());
     bgShape.setColor(context.getResources().getColor(idColor));
 
-    int typeAnim;
-    if (MainActivity.isBack) {
-      typeAnim = R.anim.left_to_right;
-    } else {
-      typeAnim = R.anim.right_to_left;
-    }
-    Animation animation = AnimationUtils.loadAnimation(parent.getContext(), typeAnim);
+    Animation animation = AnimationUtils.loadAnimation(parent.getContext(), animType);
     animation.setStartOffset(0);
     view.startAnimation(animation);
-
 
     tvTitle.setText(notes.get(position).getTitle());
     tvContent.setText(notes.get(position).getContent());

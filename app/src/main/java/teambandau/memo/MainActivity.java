@@ -37,7 +37,6 @@ import util.Util;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener {
 
   private boolean doublePressBack = false;
-  public static boolean isBack;
 
   private MenuItem searchItem;
   private Toolbar toolbar;
@@ -66,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    initFragmentStack();
     initView();
   }
 
@@ -134,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //      }
 //    });
 
-    return super.onCreateOptionsMenu(menu);
+    return true;
   }
 
   @Override
@@ -165,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
       setCurrentNotesByParentId(id);
       dictNotes.remove(note);
     }
-    isBack = true;
+    noteAdapter.setAnimation(NoteAdapter.ANIM_LTR);
   }
 
   private void initFragmentStack() {
@@ -187,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         tvMyNotes.setTypeface(null, Typeface.BOLD);
         dictNotes.clear();
         setCurrentNotesByParentId(0);
-        isBack = true;
+        noteAdapter.setAnimation(NoteAdapter.ANIM_LTR);
         break;
       case R.id.iv_copy:
         setViewOnPaste();
@@ -221,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     dictNotes.add(note);
     if (dictNotes.size() > 1)
       rvDict.smoothScrollToPosition(dictNotes.size());
-    isBack = false;
+    noteAdapter.setAnimation(NoteAdapter.ANIM_RTL);
   }
 
   @Override
