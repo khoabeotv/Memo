@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
+
+    <ImageButton
+        android:id="@+id/btnExit"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/conner"
+        android:src="@drawable/arrow_exit" />
+    <TextView
+        android:id="@+id/tvDivide"
+        android:layout_below="@id/btnExit"
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+    <GridView
+        android:padding="10dp"
+        android:background="@drawable/corner_gridview"
+        android:numColumns="7"
+        android:layout_below="@id/tvDivide"
+        android:id="@+id/gvChoosenPicture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>

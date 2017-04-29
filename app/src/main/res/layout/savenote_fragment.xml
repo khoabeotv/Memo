@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rlSavemain"
+    android:background="@color/colorPrimary">
+    <TextView
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/tvSaveTitle"
+        android:background="@drawable/conner"
+        android:text=""
+        android:inputType="textAutoComplete"
+        android:padding="8dp"
+        android:textSize="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:layout_below="@+id/tvSaveTitle"
+        android:id="@+id/llSave"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="400dp">
+        <RelativeLayout
+            android:id="@+id/rlSave"
+            android:orientation="horizontal"
+            android:background="#fff"
+            android:layout_weight="6"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+            <createnote_modul.models.CusView
+                android:layout_marginTop="50dp"
+                android:layout_marginLeft="20dp"
+                android:id="@+id/cusViewSave"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+
+            <ImageView
+                android:layout_marginTop="70dp"
+                android:layout_marginRight="20dp"
+                android:id="@+id/ivIconSave"
+                android:layout_alignParentEnd="true"
+                android:scaleType="fitXY"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                app:srcCompat="@android:drawable/checkbox_off_background"/>
+        </RelativeLayout>
+        <ScrollView
+            android:layout_weight="4"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" >
+
+            <TextView android:id="@+id/tvSaveContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="left|top"
+                android:inputType="textAutoComplete|textMultiLine"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="80dp"
+                android:background="#fff" />
+
+        </ScrollView>
+
+    </LinearLayout>
+
+    <Button
+        android:background="@drawable/sv"
+        android:layout_below="@+id/llSave"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="3dp"
+        android:id="@+id/btnSave"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+
+
+</RelativeLayout>
