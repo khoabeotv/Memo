@@ -39,6 +39,5 @@
     <color name="color_cool_13">#6c01f9</color>
     <color name="color_cool_14">#6b7008</color>
     <color name="color_cool_15">#077010</color>
-    <color name="boder_shape">#545454</color>
-
+    <color name="boder_shape">#1e1e1e</color>
 </resources>
