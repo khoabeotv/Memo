@@ -14,9 +14,6 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-        <activity android:name="createnote_modul.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name="createnote_modul.main.CreateNoteActivity"
-            android:windowSoftInputMode="adjustPan">
+                  android:windowSoftInputMode="adjustPan">
 
         </activity>
     </application>

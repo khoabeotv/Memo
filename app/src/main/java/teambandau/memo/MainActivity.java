@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import java.util.List;
 import adapters.DictAdapter;
 import adapters.NoteAdapter;
 import application.NoteApplication;
+import createnote_modul.main.CreateNoteActivity;
 import model.Note;
 import model.NoteManager;
 import util.Util;
@@ -55,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
   private SearchView searchView;
 
   private Note selectedNote;
-  private View selectedView;
   private boolean selectFlag = false;
   private boolean copyFlag = false;
   private boolean cutFlag = false;
@@ -75,6 +76,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
       public void onClick(View view) {
         if (selectFlag) {
           unSelected();
+        } else {
+          Intent i = new Intent(MainActivity.this,CreateNoteActivity.class);
+          i.putExtra(CreateNoteActivity.NOTE_TITLE_KEY,"");
+          i.putExtra(CreateNoteActivity.NOTE_CONTENT_KEY,"");
+          i.putExtra(CreateNoteActivity.NOTE_COLOR_KEY,"#faff00");
+          i.putExtra(CreateNoteActivity.NOTE_ICON_KEY,R.drawable.expressions0);
+          startActivityForResult(i,CreateNoteActivity.REQUEST_CODE_CREATENOTE);
         }
       }
     });
@@ -112,6 +120,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     toolbar.setTitle(Util.getFullDate());
     setSupportActionBar(toolbar);
     getSupportActionBar().getDisplayOptions();
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    switch (requestCode){
+      case (CreateNoteActivity.REQUEST_CODE_CREATENOTE):{
+
+        if(resultCode == CreateNoteActivity.RESULT_CODE_CREATENOTE){
+          Toast.makeText(this, data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " + data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " + data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY), Toast.LENGTH_SHORT).show();
+        }
+
+        break;
+      }
+    }
   }
 
   @Override
@@ -224,10 +246,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
   @Override
   public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-    if (selectedView != null)
-      selectedView.setBackgroundResource(android.R.color.white);
-    selectedView = view;
-    selectedView.setBackgroundResource(android.R.color.holo_blue_bright);
+    if (noteAdapter.getSelectedView() != null)
+      noteAdapter.getSelectedView().setBackgroundResource(android.R.color.white);
+    noteAdapter.setSelectedView(view);
+    noteAdapter.getSelectedView().setBackgroundResource(android.R.color.holo_blue_bright);
     List<Note> notes = NoteManager.getCurrentNotes();
     selectedNote = notes.get(position);
     toolbar.setTitle(selectedNote.getTitle());
@@ -262,11 +284,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
   }
 
   private void unSelected() {
+    selectedNote = null;
     selectFlag = false;
     copyFlag = false;
     cutFlag = false;
     toolbar.setTitle(Util.getFullDate());
-    selectedView.setBackgroundResource(android.R.color.white);
+    noteAdapter.getSelectedView().setBackgroundResource(android.R.color.white);
     setViewOnSelected(false);
   }
 
@@ -283,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     } else {
       tvInBlank.setVisibility(View.GONE);
     }
-    noteAdapter.notifyDataSetChanged();
+    noteAdapter.notifyDataSetChanged(selectedNote);
     dictAdapter.notifyDataSetChanged();
   }
 }

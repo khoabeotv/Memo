@@ -33,14 +33,6 @@
             android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
-    <TextView
-        android:background="@color/colorPrimary"
-        android:id="@+id/tvDivideFragmentGidPicture"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".5"
-        android:layout_below="@+id/rlChoosenPicture" />
-
     <LinearLayout
         android:orientation="vertical"
         android:background="#FFFF"
@@ -48,6 +40,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="6.5"
-        android:layout_below="@+id/tvDivideFragmentGidPicture" />
+        android:layout_below="@+id/rlChoosenPicture" />
 
 </LinearLayout>

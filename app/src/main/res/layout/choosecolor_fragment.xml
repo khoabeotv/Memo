@@ -5,13 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorPrimary"
+    android:background="#FFFF"
     >
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/rlChoosenColor"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
         android:background="#FFFF"
         android:layout_weight="3">
 
@@ -19,35 +21,25 @@
             android:id="@+id/cvchossenColor"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginTop="10dp"
-            android:layout_centerHorizontal="true"/>
+            android:layout_marginTop="50dp"
+            />
 
         <ToggleButton
+            android:layout_marginTop="100dp"
             android:id="@+id/tbChangeColorType"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_below="@+id/cvchossenColor"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="150dp"
-            android:layout_marginRight="150dp"
+            android:layout_height="20dp"
             android:background="@drawable/toggle"
             android:textOff=""
             android:textOn="" />
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".5"
-        android:background="@color/colorPrimary" />
+    </LinearLayout>
 
     <GridView
         android:id="@+id/gvChoosenColor"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@+id/rlChoosenColor"
-        android:layout_weight="6.5"
+        android:layout_weight="3"
         android:numColumns="5"
-        android:background="@drawable/corner_gridview"
         android:stretchMode="columnWidth" />
 </LinearLayout>

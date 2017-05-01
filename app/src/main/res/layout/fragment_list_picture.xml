@@ -5,16 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <ImageButton
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/x_icon"
-        android:backgroundTintMode="screen"
-        android:scaleType="fitXY"
+        android:background="#EEEE"
+        android:src="@drawable/ic_cancel"
         android:id="@+id/btnDeletePicture"
-        android:layout_width="50dp"
+        android:layout_width="match_parent"
         android:layout_height="50dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5px"
+        android:background="#FFFF"/>
     
     <ListView
+        android:dividerHeight="0dp"
+        android:divider="@null"
         android:id="@+id/lvfragment_list_picture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>

@@ -29,12 +29,20 @@ public class NoteAdapter extends BaseAdapter {
   private LayoutInflater inflater;
   private Context context;
   private int animType;
+  private Note selectedNote;
+  private View selectedView;
 
   public NoteAdapter(Context context, List<Note> memos) {
     this.context = context;
     this.notes = memos;
     this.inflater = LayoutInflater.from(context);
     this.animType = R.anim.right_to_left;
+  }
+
+
+  public void notifyDataSetChanged(Note selectedNote) {
+    this.selectedNote = selectedNote;
+    notifyDataSetChanged();
   }
 
   @Override
@@ -84,6 +92,22 @@ public class NoteAdapter extends BaseAdapter {
     tvTitle.setText(notes.get(position).getTitle());
     tvContent.setText(notes.get(position).getContent());
 
+
+    if (selectedNote != null) {
+      if (notes.get(position).getId() == selectedNote.getId()) {
+        selectedView = view;
+        view.setBackgroundResource(android.R.color.holo_blue_bright);
+      }
+    }
+
     return view;
+  }
+
+  public View getSelectedView() {
+    return selectedView;
+  }
+
+  public void setSelectedView(View selectedView) {
+    this.selectedView = selectedView;
   }
 }
