@@ -5,6 +5,6 @@ package createnote_modul.main;
  */
 
 public interface FragmentLifecycle {
-    public void onResumeFragment();
-    public void onPauseFragment();
+     void onResumeFragment();
+     void onPauseFragment();
 }
