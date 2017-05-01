@@ -26,7 +26,7 @@ public class CreateNoteFragmentRecord extends Fragment implements FragmentLifecy
 
     @Override
     public void onResumeFragment() {
-        
+
     }
 
     @Override
