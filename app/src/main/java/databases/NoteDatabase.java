@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
@@ -121,6 +122,8 @@ public class NoteDatabase extends SQLiteAssetHelper {
         contentValues.put("content", note.getContent());
         contentValues.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
         contentValues.put("id_parent", note.getIdParent());
+
+        Log.d("", "insertNote: LOL");
         db.insert("note", null, contentValues);
     }
 
