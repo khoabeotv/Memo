@@ -165,7 +165,8 @@ public class CreateNoteFragmentForSaveNote extends Fragment implements FragmentL
                     btnSaveWasPressed = true;
 
 
-                    // TODO:
+                    // TODO:    CẦN TÊN CỦA ICON(String), ID_PARENT_NOTE (int),
+                    // Cái currentColor : là tên màu rồi hả anh
                     Note note = new Note(0,title,"expressions22", currentColor, content, Util.getFullDate(),1);
                     NoteApplication.getInstance().getNoteDatabase().insertNote(note);
                 }
