@@ -13,7 +13,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import model.Note;
-import teambandau.memo.MainActivity;
 import teambandau.memo.R;
 
 /**
@@ -78,7 +77,7 @@ public class NoteAdapter extends BaseAdapter {
     TextView tvTitle = (TextView) view.findViewById(R.id.tvTitle);
     TextView tvContent = (TextView) view.findViewById(R.id.tvContent);
 
-    View icon_v = view.findViewById(R.id.icon_v);
+    View icon_v = view.findViewById(R.id.ivColor);
     GradientDrawable bgShape = (GradientDrawable) icon_v.getBackground();
 
     // TODO :

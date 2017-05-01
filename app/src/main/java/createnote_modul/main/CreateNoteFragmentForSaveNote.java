@@ -21,8 +21,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.Date;
+
+import application.NoteApplication;
 import createnote_modul.models.CusView;
+import databases.NoteDatabase;
+import model.Note;
 import teambandau.memo.R;
+import util.Util;
 
 
 /**
@@ -157,7 +163,13 @@ public class CreateNoteFragmentForSaveNote extends Fragment implements FragmentL
 
 
                     btnSaveWasPressed = true;
+
+
+                    // TODO:
+                    Note note = new Note(0,title,"expressions22", currentColor, content, Util.getFullDate(),1);
+                    NoteApplication.getInstance().getNoteDatabase().insertNote(note);
                 }
+
             }
         });
     }
