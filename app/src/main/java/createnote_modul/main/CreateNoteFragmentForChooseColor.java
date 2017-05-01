@@ -109,6 +109,12 @@ public class CreateNoteFragmentForChooseColor extends Fragment implements Fragme
     public void onPauseFragment() {
         editor.putString(CreateNoteActivity.NOTE_COLOR_KEY,colorWasChosen);
         SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
+
+        if(Color.hashMapCoolColors.containsKey(colorWasChosen)){
+            Color.coolColors.get(Color.hashMapCoolColors.get(colorWasChosen)).setDrawStyle(CusView.DRAW_CIRCLE);
+        }else{
+            Color.warmColors.get(Color.hashMapWarmColors.get(colorWasChosen)).setDrawStyle(CusView.DRAW_CIRCLE);
+        }
     }
 
     public void getColorAndSetCusviewAndGridView(){

@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import createnote_modul.models.CusView;
@@ -40,6 +41,7 @@ public class CreateNoteFragmentForSaveNote extends Fragment implements FragmentL
   private ImageView ivIconSave;
   private TextView tvSaveContent;
   private RelativeLayout rl;
+  private ScrollView scvContent;
 
   private String currentColor;
   private String oldColor;
@@ -80,6 +82,7 @@ public class CreateNoteFragmentForSaveNote extends Fragment implements FragmentL
     tvSaveContent = (TextView) view.findViewById(R.id.tvSaveContent);
     ivIconSave = (ImageView) view.findViewById(R.id.ivIconSave);
     rl = (RelativeLayout) view.findViewById(R.id.rlSave);
+    scvContent = (ScrollView) view.findViewById(R.id.scvContent);
 
     getAllInfoAndSet();
     startAnimation();
@@ -98,47 +101,67 @@ public class CreateNoteFragmentForSaveNote extends Fragment implements FragmentL
           ViewGroup parent = (ViewGroup) tvSaveTitle.getParent();
           parent.removeView(tvSaveTitle);
 
+          ViewGroup parentOfContent = (ViewGroup) scvContent.getParent();
+          parentOfContent.removeView(scvContent);
 
-          LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(tvSaveTitle.getWidth(), tvSaveTitle.getHeight());
+
+          RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(tvSaveTitle.getWidth(), tvSaveTitle.getHeight());
           rl.addView(tvSaveTitle, params);
+          RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(tvSaveContent.getWidth(), tvSaveContent.getHeight());
+          params1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,cusView.getId());
+          rl.addView(scvContent,params1);
+
 
           AnimationSet animationSetColor = new AnimationSet(true);
           TranslateAnimation translateAnimationForColor = new TranslateAnimation(0, rl.getWidth() / 2 - cusView.getWidth() / 2, 0, 0);
-          translateAnimationForColor.setDuration(3000);
+          translateAnimationForColor.setDuration(2000);
           AlphaAnimation alphaAnimationForColor = new AlphaAnimation(1, 0);
-          alphaAnimationForColor.setDuration(3000);
+          alphaAnimationForColor.setDuration(2000);
           animationSetColor.addAnimation(translateAnimationForColor);
           animationSetColor.addAnimation(alphaAnimationForColor);
 
           AnimationSet animationSetIcon = new AnimationSet(true);
           TranslateAnimation translateAnimationForIcon = new TranslateAnimation(0, -(rl.getWidth() / 2 + ivIconSave.getWidth() / 2), 0, -(ivIconSave.getY() - cusView.getY()));
-          translateAnimationForIcon.setDuration(3000);
+          translateAnimationForIcon.setDuration(2000);
           AlphaAnimation alphaAnimationForIcon = new AlphaAnimation(1, 0);
-          alphaAnimationForIcon.setDuration(3000);
+          alphaAnimationForIcon.setDuration(2000);
           ScaleAnimation scaleAnimationForIcon = new ScaleAnimation(1f, 0.5f, 1f, 0.5f);
-          scaleAnimationForIcon.setDuration(3000);
+          scaleAnimationForIcon.setDuration(2000);
           animationSetIcon.addAnimation(translateAnimationForIcon);
           animationSetIcon.addAnimation(alphaAnimationForIcon);
           animationSetIcon.addAnimation(scaleAnimationForIcon);
 
           AnimationSet animationSetTitle = new AnimationSet(true);
-          TranslateAnimation translateAnimationForTitle = new TranslateAnimation(tvSaveContent.getX(), rl.getWidth() / 2, 0, (float) (cusView.getY() + cusView.getHeight() / 2 - tvSaveTitle.getY()));
-          translateAnimationForTitle.setDuration(3000);
+          TranslateAnimation translateAnimationForTitle = new TranslateAnimation(tvSaveContent.getX(), rl.getWidth() / 2, 0, (float) (cusView.getY() + cusView.getHeight() / 2));
+          translateAnimationForTitle.setDuration(2000);
           AlphaAnimation alphaAnimationForTitle = new AlphaAnimation(1, 0);
-          alphaAnimationForTitle.setDuration(3000);
+          alphaAnimationForTitle.setDuration(2000);
           ScaleAnimation scaleAnimationForTitle = new ScaleAnimation(1f, 0.2f, 1f, 0.3f);
-          scaleAnimationForTitle.setDuration(3000);
+          scaleAnimationForTitle.setDuration(2000);
           animationSetTitle.addAnimation(translateAnimationForTitle);
           animationSetTitle.addAnimation(alphaAnimationForTitle);
           animationSetTitle.addAnimation(scaleAnimationForTitle);
 
+          AnimationSet animationSetContent = new AnimationSet(true);
+          TranslateAnimation translateAnimationForContent = new TranslateAnimation(0,rl.getWidth()/2,0,-(scvContent.getY() - cusView.getY()));
+          translateAnimationForContent.setDuration(2000);
+          AlphaAnimation alphaAnimationForContent = new AlphaAnimation(1, 0);
+          alphaAnimationForContent.setDuration(2000);
+          ScaleAnimation scaleAnimationForContent = new ScaleAnimation(1f, 0.5f, 1f, 0.5f);
+          scaleAnimationForTitle.setDuration(2000);
+          animationSetContent.addAnimation(translateAnimationForContent);
+          animationSetContent.addAnimation(scaleAnimationForContent);
+          animationSetContent.addAnimation(alphaAnimationForContent);
+
           animationSetColor.setFillAfter(true);
           animationSetIcon.setFillAfter(true);
           animationSetTitle.setFillAfter(true);
+          animationSetContent.setFillAfter(true);
 
           cusView.startAnimation(animationSetColor);
           ivIconSave.startAnimation(animationSetIcon);
           tvSaveTitle.startAnimation(animationSetTitle);
+          scvContent.startAnimation(animationSetContent);
           animationSetTitle.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
