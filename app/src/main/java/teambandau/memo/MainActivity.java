@@ -114,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ivCopy.setOnClickListener(this);
     ivDelete.setOnClickListener(this);
     ivCut.setOnClickListener(this);
+    ivPaste.setOnClickListener(this);
+
 
     toolbar = (Toolbar) findViewById(R.id.tool_bar);
     toolbar.setTitleTextColor(Color.WHITE);
@@ -126,11 +128,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     switch (requestCode){
       case (CreateNoteActivity.REQUEST_CODE_CREATENOTE):{
-
         if(resultCode == CreateNoteActivity.RESULT_CODE_CREATENOTE){
           Toast.makeText(this, data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " + data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " + data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY), Toast.LENGTH_SHORT).show();
         }
-
         break;
       }
     }
@@ -141,18 +141,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     MenuInflater menuInflater = getMenuInflater();
     menuInflater.inflate(R.menu.tool_bar, menu);
 
-    //final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+    final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
     searchItem = menu.findItem(R.id.search_view);
     searchView = (SearchView) searchItem.getActionView();
     searchView.setQueryHint("Search");
-    //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     searchView.setSubmitButtonEnabled(true);
-//    searchView.setOnSearchClickListener(new View.OnClickListener() {
-//      @Override
-//      public void onClick(View v) {
-//
-//      }
-//    });
+    searchView.setOnSearchClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+
+      }
+    });
 
     return true;
   }
@@ -186,17 +186,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
       dictNotes.remove(note);
     }
     noteAdapter.setAnimation(NoteAdapter.ANIM_LTR);
-  }
-
-  private void initFragmentStack() {
-    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-    transaction.commit();
-  }
-
-  public void changeFragmentStack(Fragment fragment) {
-    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-    transaction.show(fragment);
-    transaction.commit();
   }
 
   @Override
