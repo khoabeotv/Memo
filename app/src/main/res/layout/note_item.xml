@@ -11,26 +11,34 @@
         android:padding="20dp">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dp">
 
-            <ImageView
-                android:id="@+id/ivColor"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:background="@drawable/shape"
-                android:elevation="2dp" />
+            android:id="@+id/ivColor"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/shape">
 
             <ImageView
                 android:id="@+id/ivIcon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
                 android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
                 android:elevation="2dp"
                 app:srcCompat="@drawable/expressions1" />
+
+            <TextView
+                android:id="@+id/tvHasChild"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                android:layout_centerHorizontal="true"
+                android:text="..."
+                android:textStyle="bold" />
+
+
         </RelativeLayout>
 
         <LinearLayout

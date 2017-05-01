@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import model.Note;
+import model.NoteManager;
 import teambandau.memo.R;
 
 /**
@@ -93,6 +94,13 @@ public class NoteAdapter extends BaseAdapter {
         Animation animation = AnimationUtils.loadAnimation(parent.getContext(), animType);
         animation.setStartOffset(0);
         view.startAnimation(animation);
+
+        TextView tvHasChild = (TextView) view.findViewById(R.id.tvHasChild);
+        if (NoteManager.checkHasChilds(notes.get(position))) {
+            tvHasChild.setText("...");
+        } else {
+            tvHasChild.setText("");
+        }
 
         tvTitle.setText(notes.get(position).getTitle());
         tvContent.setText(notes.get(position).getContent());
