@@ -42,7 +42,6 @@ public class NoteDatabase extends SQLiteAssetHelper {
 
         SQLiteDatabase db = getReadableDatabase();
 
-//        Cursor cursor = db.rawQuery("SELECT * FROM note WHERE level = 0", null);
         Cursor cursor = db.query("note", ALL_COLUMN, null, null, null, null, null);
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(ID));
@@ -58,7 +57,6 @@ public class NoteDatabase extends SQLiteAssetHelper {
         }
 
         cursor.close();
-        // db.close();
 
         return nodeList;
     }
@@ -69,7 +67,6 @@ public class NoteDatabase extends SQLiteAssetHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("id_parent", newID + "");
         db.update("note", contentValues, "id = ?", new String[]{note.getId() + ""});
-        // db.close();
     }
 
     public void copyNote(Note note, int newIDParent) {
@@ -77,7 +74,6 @@ public class NoteDatabase extends SQLiteAssetHelper {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
 
         ContentValues contentValues = new ContentValues();
-//        contentValues.put("id", note.getId());
         contentValues.put("title", note.getTitle());
         contentValues.put("icon", note.getIcon());
         contentValues.put("color", note.getColor());
@@ -100,7 +96,6 @@ public class NoteDatabase extends SQLiteAssetHelper {
             Note noteChild = new Note(id, title, icon, color, content, date, id_parent);
             copyNote(noteChild,(int) newID);
         }
-        // db.close();
     }
 
     public void deleteNote(int idNote) {
@@ -113,7 +108,6 @@ public class NoteDatabase extends SQLiteAssetHelper {
         }
 
         db_wr.delete("note", "ID = ?", new String[]{idNote + ""});
-        //db_wr.close();
     }
 
     public void insertNote(Note note) {
@@ -121,22 +115,18 @@ public class NoteDatabase extends SQLiteAssetHelper {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
 
         ContentValues contentValues = new ContentValues();
-//        contentValues.put("id", note.getId());
         contentValues.put("title", note.getTitle());
         contentValues.put("icon", note.getIcon());
         contentValues.put("color", note.getColor());
         contentValues.put("content", note.getContent());
         contentValues.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
         contentValues.put("id_parent", note.getIdParent());
-
         db.insert("note", null, contentValues);
-        //db.close();
     }
 
     public Cursor getCursorOfChild(int idNote) {
         SQLiteDatabase db_re = getReadableDatabase();
         Cursor cursor = db_re.query("note", ALL_COLUMN, "id_parent = ?", new String[]{idNote + ""}, null, null, null);
-        //db_re.close();
         return cursor;
     }
 
