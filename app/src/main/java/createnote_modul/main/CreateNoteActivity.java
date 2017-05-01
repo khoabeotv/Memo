@@ -12,11 +12,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 
@@ -24,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import createnote_modul.animViewPager.DepthAnimation;
+import createnote_modul.models.Color;
+import createnote_modul.models.Icon;
 import teambandau.memo.R;
 
 
@@ -131,11 +130,13 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     CreateNoteFragmentForChooseColor createNoteFragmentForChooseColor = new CreateNoteFragmentForChooseColor();
     CreateNoteFragmentForChooseIcon createNoteFragmentForChooseIcon = new CreateNoteFragmentForChooseIcon();
     CreateNoteFragmentForSaveNote createNoteFragmentForSaveNote = new CreateNoteFragmentForSaveNote();
+    CreateNoteFragmentRecord createNoteFragmentRecord = new CreateNoteFragmentRecord();
 
     viewPagerAdapter.addFragment(createNoteFragmentForWriteText, "Write");
     viewPagerAdapter.addFragment(createNoteFragmentForChooseColor, "Color");
     viewPagerAdapter.addFragment(createNoteFragmentForChooseIcon, "Icon");
     viewPagerAdapter.addFragment(createNoteFragmentForSaveNote, "Save");
+    viewPagerAdapter.addFragment(createNoteFragmentRecord,"Record");
 
     viewPager.setAdapter(viewPagerAdapter);
     viewPager.setPageTransformer(true, new DepthAnimation());
@@ -146,12 +147,20 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     Intent i = new Intent();
     i.putExtra(NOTE_TITLE_KEY, sharedPreferences.getString(NOTE_TITLE_KEY, DEFAULT_TITLE));
     i.putExtra(NOTE_CONTENT_KEY, sharedPreferences.getString(NOTE_CONTENT_KEY, DEFAULT_CONTENT));
-    i.putExtra(NOTE_COLOR_KEY, sharedPreferences.getString(NOTE_COLOR_KEY, DEFAULT_COLOR));
-    i.putExtra(NOTE_ICON_KEY, sharedPreferences.getInt(NOTE_ICON_KEY, DEFAULT_ICON));
+    i.putExtra(NOTE_COLOR_KEY, getColorName(sharedPreferences.getString(NOTE_COLOR_KEY, DEFAULT_COLOR)));
+    i.putExtra(NOTE_ICON_KEY, Icon.hashMapIconName.get(sharedPreferences.getInt(NOTE_ICON_KEY, DEFAULT_ICON)));
 
 
     setResult(RESULT_CODE_CREATENOTE, i);
     finish();
+  }
+
+  public String getColorName(String s){
+    if(Color.hashMapWarmColors.containsKey(s)){
+      return "color_warm_" + Color.hashMapWarmColors.get(s);
+    }else{
+      return "color_cool_" + Color.hashMapCoolColors.get(s);
+    }
   }
 
   @Override
@@ -212,6 +221,7 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     tabLayout.getTabAt(1).setText("");
     tabLayout.getTabAt(2).setText("");
     tabLayout.getTabAt(3).setText("");
+    tabLayout.getTabAt(4).setText("");
 
     tabLayout.getTabAt(0).setIcon(R.drawable.ic_write_selected);
     tabLayout.getTabAt(1).setIcon(R.drawable.ic_color);

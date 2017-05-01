@@ -21,6 +21,7 @@ public class Icon {
 
 
     public static HashMap<String,ArrayList<Integer>> hashMapIcon;
+    public static HashMap<Integer,String> hashMapIconName;
     public static int nothingIcon;
     static {
         iconTypes = new ArrayList<>();
@@ -31,12 +32,14 @@ public class Icon {
         nothingIcon = context.getResources().getIdentifier("Nothing","drawable",context.getPackageName());
 
         hashMapIcon = new HashMap<>();
+        hashMapIconName = new HashMap<>();
         ArrayList<Integer> icons1 = new ArrayList<>();
-        for (int i = 0;i < 36;i++){
-            int resIdSound = context.getResources().getIdentifier(ICON_EXPRESSIONS+i
+        for (int i = 0;i <= ICON_EXPRESSIONS_NUMS;i++){
+            int resId = context.getResources().getIdentifier(ICON_EXPRESSIONS+i
                     ,"drawable"
                     ,context.getPackageName());
-            icons1.add(resIdSound);
+            icons1.add(resId);
+            hashMapIconName.put(resId,ICON_EXPRESSIONS+i);
         }
         hashMapIcon.put(ICON_EXPRESSIONS,icons1);
     }

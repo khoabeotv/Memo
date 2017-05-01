@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     switch (requestCode){
       case (CreateNoteActivity.REQUEST_CODE_CREATENOTE):{
         if(resultCode == CreateNoteActivity.RESULT_CODE_CREATENOTE){
-          Toast.makeText(this, data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " + data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " + data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY), Toast.LENGTH_SHORT).show();
+          Toast.makeText(this, data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY) + " " + data.getStringExtra(CreateNoteActivity.NOTE_ICON_KEY), Toast.LENGTH_SHORT).show();
         }
         break;
       }
