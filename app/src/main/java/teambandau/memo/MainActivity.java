@@ -38,278 +38,279 @@ import util.Util;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener {
 
-    private boolean doublePressBack = false;
+  private boolean doublePressBack = false;
 
-    private MenuItem searchItem;
-    private Toolbar toolbar;
-    private FloatingActionButton fab;
-    private NoteAdapter noteAdapter;
-    private ListView mainLv;
-    private DictAdapter dictAdapter;
-    private RecyclerView rvDict;
-    private List<Note> dictNotes;
-    private TextView tvMyNotes;
-    private ImageView ivDelete;
-    private ImageView ivCut;
-    private ImageView ivCopy;
-    private ImageView ivPaste;
-    private TextView tvInBlank;
-    private SearchView searchView;
+  private MenuItem searchItem;
+  private Toolbar toolbar;
+  private FloatingActionButton fab;
+  private NoteAdapter noteAdapter;
+  private ListView mainLv;
+  private DictAdapter dictAdapter;
+  private RecyclerView rvDict;
+  private List<Note> dictNotes;
+  private TextView tvMyNotes;
+  private ImageView ivDelete;
+  private ImageView ivCut;
+  private ImageView ivCopy;
+  private ImageView ivPaste;
+  private TextView tvInBlank;
+  private SearchView searchView;
 
-    private Note selectedNote;
-    private boolean selectFlag = false;
-    private boolean copyFlag = false;
-    private boolean cutFlag = false;
+  private Note selectedNote;
+  private boolean selectFlag = false;
+  private boolean copyFlag = false;
+  private boolean cutFlag = false;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
 
-        initView();
+    initView();
+  }
+
+  private void initView() {
+    fab = (FloatingActionButton) findViewById(R.id.fab);
+    fab.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (selectFlag) {
+          unSelected();
+        } else {
+          Intent i = new Intent(MainActivity.this, CreateNoteActivity.class);
+          i.putExtra(CreateNoteActivity.NOTE_TITLE_KEY, "");
+          i.putExtra(CreateNoteActivity.NOTE_CONTENT_KEY, "");
+          i.putExtra(CreateNoteActivity.NOTE_COLOR_KEY, "#faff00");
+          i.putExtra(CreateNoteActivity.NOTE_ICON_KEY, R.drawable.expressions0);
+          startActivityForResult(i, CreateNoteActivity.REQUEST_CODE_CREATENOTE);
+        }
+      }
+    });
+
+    tvInBlank = (TextView) findViewById(R.id.tv_in_blank);
+    NoteManager.setCurrentNotesByParentId(0);
+    noteAdapter = new NoteAdapter(this, NoteManager.getCurrentNotes());
+    mainLv = (ListView) findViewById(R.id.memos_lv);
+    mainLv.setAdapter(noteAdapter);
+
+    dictNotes = new ArrayList<>();
+    rvDict = (RecyclerView) findViewById(R.id.rv_dict);
+    dictAdapter = new DictAdapter(this, dictNotes, rvDict, noteAdapter, tvInBlank);
+    rvDict.setAdapter(dictAdapter);
+    rvDict.setOnClickListener(this);
+
+    mainLv.setOnItemClickListener(this);
+    mainLv.setOnItemLongClickListener(this);
+
+    tvMyNotes = (TextView) findViewById(R.id.tv_my_notes);
+    tvMyNotes.setTypeface(null, Typeface.BOLD);
+    tvMyNotes.setOnClickListener(this);
+
+    ivCopy = (ImageView) findViewById(R.id.iv_copy);
+    ivDelete = (ImageView) findViewById(R.id.iv_delete);
+    ivCut = (ImageView) findViewById(R.id.iv_cut);
+    ivPaste = (ImageView) findViewById(R.id.iv_paste);
+
+    ivCopy.setOnClickListener(this);
+    ivDelete.setOnClickListener(this);
+    ivCut.setOnClickListener(this);
+    ivPaste.setOnClickListener(this);
+
+
+    toolbar = (Toolbar) findViewById(R.id.tool_bar);
+    toolbar.setTitleTextColor(Color.WHITE);
+    toolbar.setTitle(Util.getFullDate());
+    setSupportActionBar(toolbar);
+    getSupportActionBar().getDisplayOptions();
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    switch (requestCode) {
+      case (CreateNoteActivity.REQUEST_CODE_CREATENOTE): {
+        if (resultCode == CreateNoteActivity.RESULT_CODE_CREATENOTE) {
+          Toast.makeText(this, data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " +
+                  data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " +
+                  data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY), Toast.LENGTH_SHORT).show();
+
+          String title = data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY);
+          String icon = data.getStringExtra(CreateNoteActivity.NOTE_ICON_KEY);
+          String color = data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY);
+          String content = data.getStringExtra(CreateNoteActivity.NOTE_CONTENT_KEY);
+
+          SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+          String date = format.format(new Date());
+
+          Note note = new Note(-1, title, icon, color, content, date, NoteManager.getParentId());
+          NoteApplication.getInstance().getNoteDatabase().insertNote(note);
+          reloadAllNotes(NoteManager.getParentId());
+        }
+        break;
+      }
+    }
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater menuInflater = getMenuInflater();
+    menuInflater.inflate(R.menu.tool_bar, menu);
+
+    final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+    searchItem = menu.findItem(R.id.search_view);
+    searchView = (SearchView) searchItem.getActionView();
+    searchView.setQueryHint("Search");
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    searchView.setSubmitButtonEnabled(true);
+    searchView.setOnSearchClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+
+      }
+    });
+
+    return true;
+  }
+
+  @Override
+  public void onBackPressed() {
+    if (NoteManager.getParentId() == 0) {
+      if (!doublePressBack) {
+        doublePressBack = true;
+        Toast.makeText(MainActivity.this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            doublePressBack = false;
+          }
+        }, 2000);
+      } else {
+        super.onBackPressed();
+      }
+      return;
     }
 
-    private void initView() {
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (selectFlag) {
-                    unSelected();
-                } else {
-                    Intent i = new Intent(MainActivity.this, CreateNoteActivity.class);
-                    i.putExtra(CreateNoteActivity.NOTE_TITLE_KEY, "");
-                    i.putExtra(CreateNoteActivity.NOTE_CONTENT_KEY, "");
-                    i.putExtra(CreateNoteActivity.NOTE_COLOR_KEY, "#faff00");
-                    i.putExtra(CreateNoteActivity.NOTE_ICON_KEY, R.drawable.expressions0);
-                    startActivityForResult(i, CreateNoteActivity.REQUEST_CODE_CREATENOTE);
-                }
-            }
-        });
-
-        tvInBlank = (TextView) findViewById(R.id.tv_in_blank);
-        NoteManager.setCurrentNotesByParentId(0);
-        noteAdapter = new NoteAdapter(this, NoteManager.getCurrentNotes());
-        mainLv = (ListView) findViewById(R.id.memos_lv);
-        mainLv.setAdapter(noteAdapter);
-
-        dictNotes = new ArrayList<>();
-        rvDict = (RecyclerView) findViewById(R.id.rv_dict);
-        dictAdapter = new DictAdapter(this, dictNotes, rvDict, noteAdapter, tvInBlank);
-        rvDict.setAdapter(dictAdapter);
-        rvDict.setOnClickListener(this);
-
-        mainLv.setOnItemClickListener(this);
-        mainLv.setOnItemLongClickListener(this);
-
-        tvMyNotes = (TextView) findViewById(R.id.tv_my_notes);
+    Note note = dictNotes.get(dictNotes.size() - 1);
+    if (note != null) {
+      int id = note.getIdParent();
+      if (id == 0) {
+        tvMyNotes.setTextColor(Color.parseColor("#3F51B5"));
         tvMyNotes.setTypeface(null, Typeface.BOLD);
-        tvMyNotes.setOnClickListener(this);
-
-        ivCopy = (ImageView) findViewById(R.id.iv_copy);
-        ivDelete = (ImageView) findViewById(R.id.iv_delete);
-        ivCut = (ImageView) findViewById(R.id.iv_cut);
-        ivPaste = (ImageView) findViewById(R.id.iv_paste);
-
-        ivCopy.setOnClickListener(this);
-        ivDelete.setOnClickListener(this);
-        ivCut.setOnClickListener(this);
-        ivPaste.setOnClickListener(this);
-
-
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        toolbar.setTitleTextColor(Color.WHITE);
-        toolbar.setTitle(Util.getFullDate());
-        setSupportActionBar(toolbar);
-        getSupportActionBar().getDisplayOptions();
+      }
+      setCurrentNotesByParentId(id);
+      dictNotes.remove(note);
     }
+    noteAdapter.setAnimation(NoteAdapter.ANIM_LTR);
+  }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case (CreateNoteActivity.REQUEST_CODE_CREATENOTE): {
-                if (resultCode == CreateNoteActivity.RESULT_CODE_CREATENOTE) {
-                    Toast.makeText(this, data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " +
-                            data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " +
-                            data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY), Toast.LENGTH_SHORT).show();
-
-                    String title = data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY);
-                    String icon = data.getStringExtra(CreateNoteActivity.NOTE_ICON_KEY);
-                    String color = data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY);
-                    String content = data.getStringExtra(CreateNoteActivity.NOTE_CONTENT_KEY);
-
-                    SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
-                    String date = format.format(new Date());
-
-                    Note note = new Note(-1, title, icon, color, content, date, NoteManager.getParentId());
-                    NoteApplication.getInstance().getNoteDatabase().insertNote(note);
-                    reloadAllNotes(NoteManager.getParentId());
-                }
-                break;
-            }
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.tool_bar, menu);
-
-        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchItem = menu.findItem(R.id.search_view);
-        searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint("Search");
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (NoteManager.getParentId() == 0) {
-            if (!doublePressBack) {
-                doublePressBack = true;
-                Toast.makeText(MainActivity.this, "Press back again to exit", Toast.LENGTH_SHORT).show();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        doublePressBack = false;
-                    }
-                }, 2000);
-            } else {
-                super.onBackPressed();
-            }
-            return;
-        }
-
-        Note note = dictNotes.get(dictNotes.size() - 1);
-        if (note != null) {
-            int id = note.getIdParent();
-            if (id == 0) {
-                tvMyNotes.setTextColor(Color.parseColor("#3F51B5"));
-                tvMyNotes.setTypeface(null, Typeface.BOLD);
-            }
-            setCurrentNotesByParentId(id);
-            dictNotes.remove(note);
-        }
+  @Override
+  public void onClick(View v) {
+    switch (v.getId()) {
+      case R.id.tv_my_notes:
+        tvMyNotes.setTextColor(Color.parseColor("#3F51B5"));
+        tvMyNotes.setTypeface(null, Typeface.BOLD);
+        dictNotes.clear();
+        setCurrentNotesByParentId(0);
         noteAdapter.setAnimation(NoteAdapter.ANIM_LTR);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.tv_my_notes:
-                tvMyNotes.setTextColor(Color.parseColor("#3F51B5"));
-                tvMyNotes.setTypeface(null, Typeface.BOLD);
-                dictNotes.clear();
-                setCurrentNotesByParentId(0);
-                noteAdapter.setAnimation(NoteAdapter.ANIM_LTR);
-                break;
-            case R.id.iv_copy:
-                setViewOnPaste();
-                copyFlag = true;
-                break;
-            case R.id.iv_cut:
-                setViewOnPaste();
-                cutFlag = true;
-                break;
-            case R.id.iv_delete:
-                NoteApplication.getInstance().getNoteDatabase().deleteNote(selectedNote.getId());
-                reloadAllNotes(NoteManager.getParentId());
-                break;
-            case R.id.iv_paste:
-                if (copyFlag) {
-                    NoteApplication.getInstance().getNoteDatabase().copyNote(selectedNote, NoteManager.getParentId());
-                } else if (cutFlag) {
-                    NoteApplication.getInstance().getNoteDatabase().moveNote(selectedNote, NoteManager.getParentId());
-                }
-                reloadAllNotes(NoteManager.getParentId());
-                break;
+        break;
+      case R.id.iv_copy:
+        setViewOnPaste();
+        copyFlag = true;
+        break;
+      case R.id.iv_cut:
+        setViewOnPaste();
+        cutFlag = true;
+        break;
+      case R.id.iv_delete:
+        NoteApplication.getInstance().getNoteDatabase().deleteNote(selectedNote.getId());
+        reloadAllNotes(NoteManager.getParentId());
+        break;
+      case R.id.iv_paste:
+        if (copyFlag) {
+          NoteApplication.getInstance().getNoteDatabase().copyNote(selectedNote, NoteManager.getParentId());
+        } else if (cutFlag) {
+          NoteApplication.getInstance().getNoteDatabase().moveNote(selectedNote, NoteManager.getParentId());
         }
+        reloadAllNotes(NoteManager.getParentId());
+        break;
     }
+  }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Note note = (Note) mainLv.getAdapter().getItem(position);
-        setCurrentNotesByParentId(note.getId());
-        tvMyNotes.setTypeface(null, Typeface.NORMAL);
-        tvMyNotes.setTextColor(Color.parseColor("#9FA8DA"));
-        dictNotes.add(note);
-        if (dictNotes.size() > 1)
-            rvDict.smoothScrollToPosition(dictNotes.size());
-        noteAdapter.setAnimation(NoteAdapter.ANIM_RTL);
+  @Override
+  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    Note note = (Note) mainLv.getAdapter().getItem(position);
+    setCurrentNotesByParentId(note.getId());
+    tvMyNotes.setTypeface(null, Typeface.NORMAL);
+    tvMyNotes.setTextColor(Color.parseColor("#9FA8DA"));
+    dictNotes.add(note);
+    if (dictNotes.size() > 1)
+      rvDict.smoothScrollToPosition(dictNotes.size());
+    noteAdapter.setAnimation(NoteAdapter.ANIM_RTL);
+  }
+
+  @Override
+  public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+    if (noteAdapter.getSelectedView() != null)
+      noteAdapter.getSelectedView().setBackgroundResource(android.R.color.white);
+    noteAdapter.setSelectedView(view);
+    noteAdapter.getSelectedView().setBackgroundResource(android.R.color.holo_blue_bright);
+    List<Note> notes = NoteManager.getCurrentNotes();
+    selectedNote = notes.get(position);
+    toolbar.setTitle(selectedNote.getTitle());
+    selectFlag = true;
+    setViewOnSelected(true);
+
+    return true;
+  }
+
+  private void setViewOnSelected(boolean onSelected) {
+    ivPaste.setVisibility(View.GONE);
+    int type;
+    if (onSelected) {
+      type = View.VISIBLE;
+      fab.setImageResource(R.drawable.cancel_ic);
+      searchItem.setVisible(false);
+    } else {
+      type = View.GONE;
+      fab.setImageResource(R.drawable.ic_add_black_24dp);
+      searchItem.setVisible(true);
     }
+    ivCut.setVisibility(type);
+    ivCopy.setVisibility(type);
+    ivDelete.setVisibility(type);
+  }
 
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        if (noteAdapter.getSelectedView() != null)
-            noteAdapter.getSelectedView().setBackgroundResource(android.R.color.white);
-        noteAdapter.setSelectedView(view);
-        noteAdapter.getSelectedView().setBackgroundResource(android.R.color.holo_blue_bright);
-        List<Note> notes = NoteManager.getCurrentNotes();
-        selectedNote = notes.get(position);
-        toolbar.setTitle(selectedNote.getTitle());
-        selectFlag = true;
-        setViewOnSelected(true);
+  private void setViewOnPaste() {
+    ivCut.setVisibility(View.GONE);
+    ivCopy.setVisibility(View.GONE);
+    ivDelete.setVisibility(View.GONE);
+    ivPaste.setVisibility(View.VISIBLE);
+  }
 
-        return true;
+  private void unSelected() {
+    selectedNote = null;
+    selectFlag = false;
+    copyFlag = false;
+    cutFlag = false;
+    toolbar.setTitle(Util.getFullDate());
+    if (noteAdapter.getSelectedView() != null)
+      noteAdapter.getSelectedView().setBackgroundResource(android.R.color.white);
+    setViewOnSelected(false);
+  }
+
+  private void reloadAllNotes(int idParent) {
+    NoteManager.reloadAllNotes();
+    setCurrentNotesByParentId(idParent);
+    unSelected();
+  }
+
+  private void setCurrentNotesByParentId(int parentId) {
+    NoteManager.setCurrentNotesByParentId(parentId);
+    if (NoteManager.getCurrentNotes().size() == 0) {
+      tvInBlank.setVisibility(View.VISIBLE);
+    } else {
+      tvInBlank.setVisibility(View.GONE);
     }
-
-    private void setViewOnSelected(boolean onSelected) {
-        ivPaste.setVisibility(View.GONE);
-        int type;
-        if (onSelected) {
-            type = View.VISIBLE;
-            fab.setImageResource(R.drawable.cancel_ic);
-            searchItem.setVisible(false);
-        } else {
-            type = View.GONE;
-            fab.setImageResource(R.drawable.ic_add_black_24dp);
-            searchItem.setVisible(true);
-        }
-        ivCut.setVisibility(type);
-        ivCopy.setVisibility(type);
-        ivDelete.setVisibility(type);
-    }
-
-    private void setViewOnPaste() {
-        ivCut.setVisibility(View.GONE);
-        ivCopy.setVisibility(View.GONE);
-        ivDelete.setVisibility(View.GONE);
-        ivPaste.setVisibility(View.VISIBLE);
-    }
-
-    private void unSelected() {
-        selectedNote = null;
-        selectFlag = false;
-        copyFlag = false;
-        cutFlag = false;
-        toolbar.setTitle(Util.getFullDate());
-        noteAdapter.getSelectedView().setBackgroundResource(android.R.color.white);
-        setViewOnSelected(false);
-    }
-
-    private void reloadAllNotes(int idParent) {
-        NoteManager.reloadAllNotes();
-        setCurrentNotesByParentId(idParent);
-        unSelected();
-    }
-
-    private void setCurrentNotesByParentId(int parentId) {
-        NoteManager.setCurrentNotesByParentId(parentId);
-        if (NoteManager.getCurrentNotes().size() == 0) {
-            tvInBlank.setVisibility(View.VISIBLE);
-        } else {
-            tvInBlank.setVisibility(View.GONE);
-        }
-        noteAdapter.notifyDataSetChanged(selectedNote);
-        dictAdapter.notifyDataSetChanged();
-    }
+    noteAdapter.notifyDataSetChanged(selectedNote);
+    dictAdapter.notifyDataSetChanged();
+  }
 }
