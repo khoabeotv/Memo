@@ -11,7 +11,7 @@ import android.view.ViewGroup;
  * Created by l on 5/1/2017.
  */
 
-public class CreateNoteFragmentRecord extends Fragment implements FragmentLifecycle {
+public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecycle {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

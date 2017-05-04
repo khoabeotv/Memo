@@ -130,13 +130,13 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     CreateNoteFragmentForChooseColor createNoteFragmentForChooseColor = new CreateNoteFragmentForChooseColor();
     CreateNoteFragmentForChooseIcon createNoteFragmentForChooseIcon = new CreateNoteFragmentForChooseIcon();
     CreateNoteFragmentForSaveNote createNoteFragmentForSaveNote = new CreateNoteFragmentForSaveNote();
-    CreateNoteFragmentRecord createNoteFragmentRecord = new CreateNoteFragmentRecord();
+    CreateNoteFragmentAttach createNoteFragmentAttach = new CreateNoteFragmentAttach();
 
     viewPagerAdapter.addFragment(createNoteFragmentForWriteText, "Write");
     viewPagerAdapter.addFragment(createNoteFragmentForChooseColor, "Color");
     viewPagerAdapter.addFragment(createNoteFragmentForChooseIcon, "Icon");
     viewPagerAdapter.addFragment(createNoteFragmentForSaveNote, "Save");
-    viewPagerAdapter.addFragment(createNoteFragmentRecord,"Record");
+    viewPagerAdapter.addFragment(createNoteFragmentAttach,"Record");
 
     viewPager.setAdapter(viewPagerAdapter);
     viewPager.setPageTransformer(true, new DepthAnimation());
@@ -227,6 +227,7 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     tabLayout.getTabAt(1).setIcon(R.drawable.ic_color);
     tabLayout.getTabAt(2).setIcon(R.drawable.ic_icon);
     tabLayout.getTabAt(3).setIcon(R.drawable.ic_save);
+    tabLayout.getTabAt(4).setIcon(R.drawable.ic_attachment);
   }
 
   public void setupTabsIcon(int position, boolean selected) {
@@ -244,6 +245,9 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
         case 3:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_save_selected);
           break;
+        case 4:
+          tabLayout.getTabAt(position).setIcon(R.drawable.ic_attachment_selected);
+          break;
       }
     } else {
       switch (position) {
@@ -258,6 +262,9 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
           break;
         case 3:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_save);
+          break;
+        case 4:
+          tabLayout.getTabAt(position).setIcon(R.drawable.ic_attachment);
           break;
       }
     }
