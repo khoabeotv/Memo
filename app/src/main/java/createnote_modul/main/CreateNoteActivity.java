@@ -18,7 +18,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import createnote_modul.animViewPager.DepthAnimation;
 import createnote_modul.models.Color;
@@ -30,13 +32,16 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
   public static final int REQUEST_CODE_CREATENOTE = 123;
   public static final int RESULT_CODE_CREATENOTE = 124;
 
+
   public static String NOTE_CONTENT_KEY = "notetext";
   public static String NOTE_TITLE_KEY = "notetitle";
   public static String NOTE_COLOR_KEY = "notecolor";
   public static String NOTE_ICON_KEY = "noteicon";
   public static String NOTE_OLDCOLOR_KEY = "noteoldcolor";
   public static String NAME_OF_SHARED_PREFERENCES_CREATENOTEACTIVITY = "shared_in_CreateNodeActivity";
+  public static String NOTE_ATTACH_KEY = "note_attach_key";
 
+  private static final Set<String> DEFAULT_ATTACH = new HashSet<>();
   public static String DEFAULT_TITLE = "";
   public static String DEFAULT_CONTENT = "";
   public static String DEFAULT_COLOR = "#01d8f9";
@@ -149,7 +154,9 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     i.putExtra(NOTE_CONTENT_KEY, sharedPreferences.getString(NOTE_CONTENT_KEY, DEFAULT_CONTENT));
     i.putExtra(NOTE_COLOR_KEY, getColorName(sharedPreferences.getString(NOTE_COLOR_KEY, DEFAULT_COLOR)));
     i.putExtra(NOTE_ICON_KEY, Icon.hashMapIconName.get(sharedPreferences.getInt(NOTE_ICON_KEY, DEFAULT_ICON)));
-
+    ArrayList<String> attachments = new ArrayList<>();
+    attachments.addAll(sharedPreferences.getStringSet(NOTE_ATTACH_KEY, DEFAULT_ATTACH));
+    i.putStringArrayListExtra(NOTE_ATTACH_KEY, attachments);
 
     setResult(RESULT_CODE_CREATENOTE, i);
     finish();

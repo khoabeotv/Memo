@@ -31,6 +31,7 @@ import adapters.DictAdapter;
 import adapters.NoteAdapter;
 import application.NoteApplication;
 import createnote_modul.main.CreateNoteActivity;
+import createnote_modul.main.CreateNoteFragmentAttach;
 import databases.NoteDatabase;
 import model.Note;
 import model.NoteManager;
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    CreateNoteFragmentAttach.selectedImages.clear();
     switch (requestCode) {
       case (CreateNoteActivity.REQUEST_CODE_CREATENOTE): {
         if (resultCode == CreateNoteActivity.RESULT_CODE_CREATENOTE) {
