@@ -21,11 +21,11 @@
         android:text="Press the attach button to add a new picture or a new document"
         />
 
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
+        android:layout_below="@id/im_back"
         android:id="@+id/im_picked"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="match_parent"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <GridView
         android:id="@+id/gv_attach"

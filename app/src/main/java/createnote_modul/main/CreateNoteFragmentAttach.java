@@ -27,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.chrisbanes.photoview.PhotoView;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +57,7 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
   private FloatingActionButton fabAttach;
   private GridView gvAttachments;
   private TextView tvInBlank;
-  private ImageView imPicked;
+  private PhotoView imPicked;
   private ImageView imBack;
   private AttachmentAdapter attachmentAdapter;
   private Uri imageToUploadUri;
@@ -83,7 +85,7 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     tvInBlank = (TextView) view.findViewById(R.id.tv_attach);
     if (selectedImages.size() > 0)
       tvInBlank.setVisibility(View.GONE);
-    imPicked = (ImageView) view.findViewById(R.id.im_picked);
+    imPicked = (PhotoView) view.findViewById(R.id.im_picked);
     imBack = (ImageView) view.findViewById(R.id.im_back);
     imBack.setOnClickListener(this);
 
