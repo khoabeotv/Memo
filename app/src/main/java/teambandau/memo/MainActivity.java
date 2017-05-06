@@ -143,7 +143,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
           SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
           String date = format.format(new Date());
 
-          Note note = new Note(-1, title, icon, color, content, date, NoteManager.getParentId());
+          ArrayList<String> imgs = data.getStringArrayListExtra(CreateNoteActivity.NOTE_ATTACH_KEY);
+
+          Note note = new Note(-1, title, icon, color, content, date, NoteManager.getParentId(), imgs);
           NoteApplication.getInstance().getNoteDatabase().insertNote(note);
           reloadAllNotes(NoteManager.getParentId());
         }

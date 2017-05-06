@@ -27,15 +27,15 @@ public class Note {
     this.img = img;
   }
 
-  public Note(int id, String title, String icon, String color, String content, String date, int idParent) {
-    this.id = id;
-    this.title = title;
-    this.icon = icon;
-    this.color = color;
-    this.content = content;
-    this.date = date;
-    this.idParent = idParent;
-  }
+//  public Note(int id, String title, String icon, String color, String content, String date, int idParent) {
+//    this.id = id;
+//    this.title = title;
+//    this.icon = icon;
+//    this.color = color;
+//    this.content = content;
+//    this.date = date;
+//    this.idParent = idParent;
+//  }
 
   public int getId() {
     return id;
@@ -91,5 +91,13 @@ public class Note {
 
   public void setDate(String date) {
     this.date = date;
+  }
+
+  public ArrayList<String> getImg() {
+    return img;
+  }
+
+  public void setImg(ArrayList<String> img) {
+    this.img = img;
   }
 }

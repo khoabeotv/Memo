@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
@@ -24,15 +23,19 @@ public class NoteDatabase extends SQLiteAssetHelper {
     private static final String DATABASE_NAME = "note.db";
     private static final int DATABASE_VERSION = 1;
 
-    private static final String ID = "id";
-    private static final String TITLE = "title";
-    private static final String ICON = "icon";
-    private static final String COLOR = "color";
-    private static final String CONTENT = "content";
-    private static final String DATE = "date";
-    private static final String ID_PARENT = "id_parent";
+    private static final String ID__NOTE_TABLE = "id";
+    private static final String TITLE__NOTE_TABLE = "title";
+    private static final String ICON__NOTE_TABLE = "icon";
+    private static final String COLOR__NOTE_TABLE = "color";
+    private static final String CONTENT__NOTE_TABLE = "content";
+    private static final String DATE__NOTE_TABLE = "date";
+    private static final String ID_PARENT__NOTE_TABLE = "id_parent";
 
-    private static final String[] ALL_COLUMN = {ID, TITLE, ICON, COLOR, CONTENT, DATE, ID_PARENT};
+    private static final String[] ALL_COLUMN__NOTE_TABLE = {ID__NOTE_TABLE, TITLE__NOTE_TABLE, ICON__NOTE_TABLE, COLOR__NOTE_TABLE, CONTENT__NOTE_TABLE, DATE__NOTE_TABLE, ID_PARENT__NOTE_TABLE};
+
+    private static final String NOTE_ID__NOTE_IMG_TABLE = "note_id";
+    private static final String IMG__NOTE_IMG_TABLE = "img";
+    private static final String[] ALL_COLUMN__NOTE_IMG_TABLE = { NOTE_ID__NOTE_IMG_TABLE, IMG__NOTE_IMG_TABLE};
 
     public NoteDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -43,17 +46,19 @@ public class NoteDatabase extends SQLiteAssetHelper {
 
         SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.query("note", ALL_COLUMN, null, null, null, null, null);
+        Cursor cursor = db.query("note", ALL_COLUMN__NOTE_TABLE, null, null, null, null, null);
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex(ID));
-            String title = cursor.getString(cursor.getColumnIndex(TITLE));
-            String icon = cursor.getString(cursor.getColumnIndex(ICON));
-            String color = cursor.getString(cursor.getColumnIndex(COLOR));
-            String content = cursor.getString(cursor.getColumnIndex(CONTENT));
-            String date = cursor.getString(cursor.getColumnIndex(DATE));
-            int id_parent = cursor.getInt(cursor.getColumnIndex(ID_PARENT));
+            int id = cursor.getInt(cursor.getColumnIndex(ID__NOTE_TABLE));
+            String title = cursor.getString(cursor.getColumnIndex(TITLE__NOTE_TABLE));
+            String icon = cursor.getString(cursor.getColumnIndex(ICON__NOTE_TABLE));
+            String color = cursor.getString(cursor.getColumnIndex(COLOR__NOTE_TABLE));
+            String content = cursor.getString(cursor.getColumnIndex(CONTENT__NOTE_TABLE));
+            String date = cursor.getString(cursor.getColumnIndex(DATE__NOTE_TABLE));
+            int id_parent = cursor.getInt(cursor.getColumnIndex(ID_PARENT__NOTE_TABLE));
 
-            Note note = new Note(id, title, icon, color, content, date, id_parent);
+            ArrayList<String> imgs = loadNoteImg(id);
+
+            Note note = new Note(id, title, icon, color, content, date, id_parent, imgs);
             nodeList.add(note);
         }
 
@@ -83,19 +88,21 @@ public class NoteDatabase extends SQLiteAssetHelper {
         contentValues.put("id_parent", newIDParent);
 
         long newID = db.insert("note", null, contentValues);
+        insertNoteImg(note, newID);
 
         Cursor cursor = getCursorOfChild(note.getId());
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex(ID));
-            String title = cursor.getString(cursor.getColumnIndex(TITLE));
-            String icon = cursor.getString(cursor.getColumnIndex(ICON));
-            String color = cursor.getString(cursor.getColumnIndex(COLOR));
-            String content = cursor.getString(cursor.getColumnIndex(CONTENT));
-            String date = cursor.getString(cursor.getColumnIndex(DATE));
-            int id_parent = cursor.getInt(cursor.getColumnIndex(ID_PARENT));
+            int id = cursor.getInt(cursor.getColumnIndex(ID__NOTE_TABLE));
+            String title = cursor.getString(cursor.getColumnIndex(TITLE__NOTE_TABLE));
+            String icon = cursor.getString(cursor.getColumnIndex(ICON__NOTE_TABLE));
+            String color = cursor.getString(cursor.getColumnIndex(COLOR__NOTE_TABLE));
+            String content = cursor.getString(cursor.getColumnIndex(CONTENT__NOTE_TABLE));
+            String date = cursor.getString(cursor.getColumnIndex(DATE__NOTE_TABLE));
+            int id_parent = cursor.getInt(cursor.getColumnIndex(ID_PARENT__NOTE_TABLE));
+            ArrayList<String> imgs = loadNoteImg(id);
 
-            Note noteChild = new Note(id, title, icon, color, content, date, id_parent);
-            copyNote(noteChild,(int) newID);
+            Note noteChild = new Note(id, title, icon, color, content, date, id_parent, imgs);
+            copyNote(noteChild, (int) newID);
         }
     }
 
@@ -104,33 +111,63 @@ public class NoteDatabase extends SQLiteAssetHelper {
 
         Cursor cursor = getCursorOfChild(idNote);
         while (cursor.moveToNext()) {
-            int idChild = cursor.getInt(cursor.getColumnIndex(ID));
+            int idChild = cursor.getInt(cursor.getColumnIndex(ID__NOTE_TABLE));
             deleteNote(idChild);
         }
 
-        db_wr.delete("note", "ID = ?", new String[]{idNote + ""});
+        db_wr.delete("note", "ID__NOTE_TABLE = ?", new String[]{idNote + ""});
     }
 
     public void insertNote(Note note) {
         SQLiteDatabase db = getWritableDatabase();
         SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("title", note.getTitle());
-        contentValues.put("icon", note.getIcon());
-        contentValues.put("color", note.getColor());
-        contentValues.put("content", note.getContent());
-        contentValues.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
-        contentValues.put("id_parent", note.getIdParent());
+        ContentValues contentValues_NoteTable = new ContentValues();
+        contentValues_NoteTable.put("title", note.getTitle());
+        contentValues_NoteTable.put("icon", note.getIcon());
+        contentValues_NoteTable.put("color", note.getColor());
+        contentValues_NoteTable.put("content", note.getContent());
+        contentValues_NoteTable.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
+        contentValues_NoteTable.put("id_parent", note.getIdParent());
 
-        Log.d("", "insertNote: LOL");
-        db.insert("note", null, contentValues);
+        long id = db.insert("note", null, contentValues_NoteTable);
+        insertNoteImg(note, id);
+
     }
 
     public Cursor getCursorOfChild(int idNote) {
         SQLiteDatabase db_re = getReadableDatabase();
-        Cursor cursor = db_re.query("note", ALL_COLUMN, "id_parent = ?", new String[]{idNote + ""}, null, null, null);
+        Cursor cursor = db_re.query("note", ALL_COLUMN__NOTE_TABLE, "id_parent = ?", new String[]{idNote + ""}, null, null, null);
         return cursor;
+    }
+
+
+    private ArrayList<String> loadNoteImg(int noteID) {
+        ArrayList<String> imgs = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query("note_img", ALL_COLUMN__NOTE_IMG_TABLE, "note_id = ?", new String[]{noteID + ""}, null, null, null);
+        while (cursor.moveToNext()) {
+            String img = cursor.getString(cursor.getColumnIndex(IMG__NOTE_IMG_TABLE));
+            imgs.add(img);
+        }
+
+        cursor.close();
+        return imgs;
+    }
+
+    private void insertNoteImg(Note note, long id) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues contentValues_NoteImgTable = new ContentValues();
+        for (String img : note.getImg()) {
+            contentValues_NoteImgTable.put("note_id", id);
+            contentValues_NoteImgTable.put("img", img);
+            db.insert("note_img", null, contentValues_NoteImgTable);
+            contentValues_NoteImgTable.clear();
+        }
+
     }
 
 }
