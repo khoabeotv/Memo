@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 /**
  * Created by TrKaJv on 19-Apr-17.
  */
@@ -12,6 +14,18 @@ public class Note {
   private String content;
   private String date;
   private int idParent;
+  private ArrayList<String> img;
+
+  public Note(int id, String title, String icon, String color, String content, String date, int idParent, ArrayList<String> img) {
+    this.id = id;
+    this.title = title;
+    this.icon = icon;
+    this.color = color;
+    this.content = content;
+    this.date = date;
+    this.idParent = idParent;
+    this.img = img;
+  }
 
   public Note(int id, String title, String icon, String color, String content, String date, int idParent) {
     this.id = id;
@@ -22,7 +36,6 @@ public class Note {
     this.date = date;
     this.idParent = idParent;
   }
-
 
   public int getId() {
     return id;
