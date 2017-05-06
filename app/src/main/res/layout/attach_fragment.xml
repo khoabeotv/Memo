@@ -4,14 +4,28 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/im_back"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back"
+        android:visibility="gone"/>
+
     <TextView
         android:id="@+id/tv_attach"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="gone"
         android:text="Press the attach button to add a new picture or a new document"
         />
+
+    <ImageView
+        android:id="@+id/im_picked"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent"/>
 
     <GridView
         android:id="@+id/gv_attach"

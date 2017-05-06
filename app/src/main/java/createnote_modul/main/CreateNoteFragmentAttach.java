@@ -10,25 +10,34 @@ import android.graphics.Bitmap;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.SharedPreferencesCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import application.NoteApplication;
 import createnote_modul.modul_attach.AttachmentAdapter;
 import teambandau.memo.R;
 
@@ -36,15 +45,21 @@ import teambandau.memo.R;
  * Created by l on 5/1/2017.
  */
 
-public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecycle, View.OnClickListener {
+public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecycle, View.OnClickListener, AdapterView.OnItemClickListener {
+
+  public static final List<String> selectedImages = new ArrayList<>();
 
   private SharedPreferences sharedPreferences;
   private SharedPreferences.Editor editor;
 
   private FloatingActionButton fabAttach;
-  public static final List<String> selectedImages = new ArrayList<>();
   private GridView gvAttachments;
+  private TextView tvInBlank;
+  private ImageView imPicked;
+  private ImageView imBack;
   private AttachmentAdapter attachmentAdapter;
+  private Uri imageToUploadUri;
+
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +78,14 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     gvAttachments = (GridView) view.findViewById(R.id.gv_attach);
     attachmentAdapter = new AttachmentAdapter(getActivity(), selectedImages);
     gvAttachments.setAdapter(attachmentAdapter);
+    gvAttachments.setOnItemClickListener(this);
+
+    tvInBlank = (TextView) view.findViewById(R.id.tv_attach);
+    if (selectedImages.size() > 0)
+      tvInBlank.setVisibility(View.GONE);
+    imPicked = (ImageView) view.findViewById(R.id.im_picked);
+    imBack = (ImageView) view.findViewById(R.id.im_back);
+    imBack.setOnClickListener(this);
 
     return view;
   }
@@ -83,13 +106,15 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode) {
       case 0:
-//        if (resultCode == Activity.RESULT_OK) {
-//          selectedImages.add(getImageUri(getActivity(), (Bitmap) data.getExtras().get("data")).toString());
-//        }
+        if (resultCode == Activity.RESULT_OK) {
+          selectedImages.add(imageToUploadUri.toString());
+          tvInBlank.setVisibility(View.GONE);
+        }
         break;
       case 1:
         if (resultCode == Activity.RESULT_OK) {
           selectedImages.add(data.getData().toString());
+          tvInBlank.setVisibility(View.GONE);
         }
         break;
     }
@@ -98,34 +123,58 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
 
   @Override
   public void onClick(View v) {
-    final CharSequence[] items = {
-            "Take a picture", "Select a picture from gallery", "Document"
-    };
+    if (v.equals(fabAttach)) {
+      final CharSequence[] items = {
+              "Take a picture", "Select a picture from gallery", "Document"
+      };
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-    builder.setItems(items, new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int item) {
-        switch (item) {
-          case 0:
-            Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(takePicture, 0);
-            break;
-          case 1:
-            Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(pickPhoto, 1);
-            break;
+      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+      builder.setItems(items, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int item) {
+          switch (item) {
+            case 0:
+              Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+              imageToUploadUri = FileProvider.getUriForFile(getActivity(), getActivity().getApplicationContext().getPackageName() + ".provider", getOutputMediaFile());
+              cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageToUploadUri);
+              startActivityForResult(cameraIntent, 0);
+              break;
+            case 1:
+              Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                      android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+              startActivityForResult(pickPhoto, 1);
+              break;
+          }
         }
-      }
-    });
-    AlertDialog alert = builder.create();
-    alert.show();
+      });
+      AlertDialog alert = builder.create();
+      alert.show();
+    } else if (v.equals(imBack)) {
+      imBack.setVisibility(View.GONE);
+      imPicked.setVisibility(View.GONE);
+      gvAttachments.setVisibility(View.VISIBLE);
+    }
   }
 
-//  public Uri getImageUri(Context inContext, Bitmap inImage) {
-//    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-//    inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-//    String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-//    return Uri.parse(path);
-//  }
+  private static File getOutputMediaFile() {
+    File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES), "Camera");
+
+    if (!mediaStorageDir.exists()) {
+      if (!mediaStorageDir.mkdirs()) {
+        return null;
+      }
+    }
+
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    return new File(mediaStorageDir.getPath() + File.separator +
+            "IMG_" + timeStamp + ".jpg");
+  }
+
+  @Override
+  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    imPicked.setImageURI(Uri.parse(selectedImages.get(position)));
+    imPicked.setVisibility(View.VISIBLE);
+    imBack.setVisibility(View.VISIBLE);
+    gvAttachments.setVisibility(View.GONE);
+  }
 }
