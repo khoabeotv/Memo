@@ -17,7 +17,6 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -64,7 +63,7 @@ public class CreateNoteFragmentForSaveNote extends Fragment implements FragmentL
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    sharedPreferences = getActivity().getSharedPreferences(CreateNoteActivity.NAME_OF_SHARED_PREFERENCES_CREATENOTEACTIVITY, Context.MODE_PRIVATE);
+    sharedPreferences = getActivity().getSharedPreferences(CreateNoteActivity.NAME_OF_SHARED_PREFERENCES_CREATE_NOTE_ACTIVITY, Context.MODE_PRIVATE);
     editor = sharedPreferences.edit();
 
     createNoteFragmentForSaveNoteListener = (CreateNoteFragmentForSaveNoteListener) getActivity();
@@ -197,7 +196,7 @@ public class CreateNoteFragmentForSaveNote extends Fragment implements FragmentL
 
     icon = sharedPreferences.getInt(CreateNoteActivity.NOTE_ICON_KEY, CreateNoteActivity.DEFAULT_ICON);
     currentColor = sharedPreferences.getString(CreateNoteActivity.NOTE_COLOR_KEY, CreateNoteActivity.DEFAULT_COLOR);
-    oldColor = sharedPreferences.getString(CreateNoteActivity.NOTE_OLDCOLOR_KEY, CreateNoteActivity.DEFAULT_COLOR);
+    oldColor = sharedPreferences.getString(CreateNoteActivity.NOTE_OLD_COLOR_KEY, CreateNoteActivity.DEFAULT_COLOR);
     title = sharedPreferences.getString(CreateNoteActivity.NOTE_TITLE_KEY, CreateNoteActivity.DEFAULT_TITLE);
     content = sharedPreferences.getString(CreateNoteActivity.NOTE_CONTENT_KEY, CreateNoteActivity.DEFAULT_CONTENT);
 

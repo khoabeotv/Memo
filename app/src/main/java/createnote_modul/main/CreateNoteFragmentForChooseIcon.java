@@ -37,7 +37,7 @@ public class CreateNoteFragmentForChooseIcon extends Fragment implements Fragmen
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getActivity().getSharedPreferences(CreateNoteActivity.NAME_OF_SHARED_PREFERENCES_CREATENOTEACTIVITY, Context.MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences(CreateNoteActivity.NAME_OF_SHARED_PREFERENCES_CREATE_NOTE_ACTIVITY, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         idPictureWasChoose = sharedPreferences.getInt(CreateNoteActivity.NOTE_ICON_KEY,CreateNoteActivity.DEFAULT_ICON);
     }

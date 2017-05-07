@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -40,7 +41,7 @@ import util.Util;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener {
 
   private boolean doublePressBack = false;
-
+  private boolean doubleTapItem = false;
   private MenuItem searchItem;
   private Toolbar toolbar;
   private FloatingActionButton fab;
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
           i.putExtra(CreateNoteActivity.NOTE_CONTENT_KEY, "");
           i.putExtra(CreateNoteActivity.NOTE_COLOR_KEY, "#faff00");
           i.putExtra(CreateNoteActivity.NOTE_ICON_KEY, R.drawable.expressions0);
+          i.putStringArrayListExtra(CreateNoteActivity.NOTE_ATTACH_KEY, new ArrayList<String>());
           startActivityForResult(i, CreateNoteActivity.REQUEST_CODE_CREATENOTE);
         }
       }
@@ -241,14 +243,43 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    Note note = (Note) mainLv.getAdapter().getItem(position);
-    setCurrentNotesByParentId(note.getId());
-    tvMyNotes.setTypeface(null, Typeface.NORMAL);
-    tvMyNotes.setTextColor(Color.parseColor("#9FA8DA"));
-    dictNotes.add(note);
-    if (dictNotes.size() > 1)
-      rvDict.smoothScrollToPosition(dictNotes.size());
-    noteAdapter.setAnimation(NoteAdapter.ANIM_RTL);
+    CountDownTimer countDownTimer = null;
+    final Note note = (Note) mainLv.getAdapter().getItem(position);
+    if (!doubleTapItem) {
+      doubleTapItem = true;
+      countDownTimer = new CountDownTimer(200, 100) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+
+        }
+
+        @Override
+        public void onFinish() {
+          if (doubleTapItem) {
+            setCurrentNotesByParentId(note.getId());
+            tvMyNotes.setTypeface(null, Typeface.NORMAL);
+            tvMyNotes.setTextColor(Color.parseColor("#9FA8DA"));
+            dictNotes.add(note);
+            if (dictNotes.size() > 1)
+              rvDict.smoothScrollToPosition(dictNotes.size());
+            noteAdapter.setAnimation(NoteAdapter.ANIM_RTL);
+          }
+          doubleTapItem = false;
+        }
+      };
+      countDownTimer.start();
+    } else {
+      doubleTapItem = false;
+      if (countDownTimer != null)
+        countDownTimer.onFinish();
+      Intent i = new Intent(MainActivity.this, CreateNoteActivity.class);
+      i.putExtra(CreateNoteActivity.NOTE_TITLE_KEY, note.getTitle());
+      i.putExtra(CreateNoteActivity.NOTE_CONTENT_KEY, note.getContent());
+      i.putExtra(CreateNoteActivity.NOTE_COLOR_KEY, "#faff00");
+      i.putExtra(CreateNoteActivity.NOTE_ICON_KEY, R.drawable.expressions0);
+      i.putStringArrayListExtra(CreateNoteActivity.NOTE_ATTACH_KEY, note.getImg());
+      startActivityForResult(i, CreateNoteActivity.REQUEST_CODE_CREATENOTE);
+    }
   }
 
   @Override

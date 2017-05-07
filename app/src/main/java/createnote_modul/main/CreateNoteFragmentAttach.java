@@ -6,8 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.media.Image;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,15 +22,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.github.chrisbanes.photoview.PhotoView;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,8 +33,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import application.NoteApplication;
 import createnote_modul.modul_attach.AttachmentAdapter;
+import teambandau.memo.PhotoActivity;
 import teambandau.memo.R;
 
 /**
@@ -57,8 +51,6 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
   private FloatingActionButton fabAttach;
   private GridView gvAttachments;
   private TextView tvInBlank;
-  private PhotoView imPicked;
-  private ImageView imBack;
   private AttachmentAdapter attachmentAdapter;
   private Uri imageToUploadUri;
 
@@ -66,8 +58,10 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    sharedPreferences = getActivity().getSharedPreferences(CreateNoteActivity.NAME_OF_SHARED_PREFERENCES_CREATENOTEACTIVITY, Context.MODE_PRIVATE);
+    sharedPreferences = getActivity().getSharedPreferences(CreateNoteActivity.NAME_OF_SHARED_PREFERENCES_CREATE_NOTE_ACTIVITY, Context.MODE_PRIVATE);
     editor = sharedPreferences.edit();
+    if (selectedImages.size() == 0)
+      selectedImages.addAll(sharedPreferences.getStringSet(CreateNoteActivity.NOTE_ATTACH_KEY, CreateNoteActivity.DEFAULT_ATTACH));
   }
 
   @Nullable
@@ -85,9 +79,6 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     tvInBlank = (TextView) view.findViewById(R.id.tv_attach);
     if (selectedImages.size() > 0)
       tvInBlank.setVisibility(View.GONE);
-    imPicked = (PhotoView) view.findViewById(R.id.im_picked);
-    imBack = (ImageView) view.findViewById(R.id.im_back);
-    imBack.setOnClickListener(this);
 
     return view;
   }
@@ -105,7 +96,6 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
 
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode) {
       case 0:
         if (resultCode == Activity.RESULT_OK) {
@@ -119,15 +109,72 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
           tvInBlank.setVisibility(View.GONE);
         }
         break;
+      case 2:
+        if (resultCode == Activity.RESULT_OK) {
+          Uri uri = data.getData();
+          File file = new File(uri.toString());
+
+          //if (fileType.equals("pdf")) {
+          Intent intent = new Intent(Intent.ACTION_VIEW);
+          intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+          intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+          startActivity(Intent.createChooser(intent, "Open File"));
+
+//          } else if (fileType.equals("txt")) {
+//            Intent intent = new Intent(Intent.ACTION_VIEW);
+//            intent.setDataAndType(uri, "text/plain");
+//            startActivity(intent);
+//
+//          } else if (fileType.equals(".docx")) {
+//            Intent intent = new Intent();
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.setAction(Intent.ACTION_VIEW);
+//            String type = "application/msword";
+//            intent.setDataAndType(uri, type);
+//            startActivity(intent);
+//          }
+        }
+        break;
+      default:
+        super.onActivityResult(requestCode, resultCode, data);
+        break;
     }
     attachmentAdapter.notifyDataSetChanged();
+  }
+
+  public String getFileType(Uri uri) throws URISyntaxException {
+    String path = getPath(getActivity(), uri);
+    Log.d("zzzzz", path);
+    String[] strings = path.split(".");
+    return strings[strings.length - 1];
+  }
+
+  public static String getPath(Context context, Uri uri) throws URISyntaxException {
+    if ("content".equalsIgnoreCase(uri.getScheme())) {
+      String[] projection = {"_data"};
+      Cursor cursor = null;
+
+      try {
+        cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow("_data");
+        if (cursor.moveToFirst()) {
+          return cursor.getString(column_index);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+      return uri.getPath();
+    }
+
+    return null;
   }
 
   @Override
   public void onClick(View v) {
     if (v.equals(fabAttach)) {
       final CharSequence[] items = {
-              "Take a picture", "Select a picture from gallery", "Document"
+              "Take photo", "Select image", "Document"
       };
 
       AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -145,15 +192,19 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
                       android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
               startActivityForResult(pickPhoto, 1);
               break;
+            case 2:
+              Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+              intent.setType("*/*");
+              intent.addCategory(Intent.CATEGORY_OPENABLE);
+              startActivityForResult(
+                      Intent.createChooser(intent, "Select a File to Upload"),
+                      2);
+              break;
           }
         }
       });
       AlertDialog alert = builder.create();
       alert.show();
-    } else if (v.equals(imBack)) {
-      imBack.setVisibility(View.GONE);
-      imPicked.setVisibility(View.GONE);
-      gvAttachments.setVisibility(View.VISIBLE);
     }
   }
 
@@ -174,9 +225,8 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
 
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    imPicked.setImageURI(Uri.parse(selectedImages.get(position)));
-    imPicked.setVisibility(View.VISIBLE);
-    imBack.setVisibility(View.VISIBLE);
-    gvAttachments.setVisibility(View.GONE);
+    Intent i = new Intent(getActivity(), PhotoActivity.class);
+    i.putExtra("uri_string", selectedImages.get(position));
+    startActivity(i);
   }
 }
