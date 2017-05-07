@@ -231,6 +231,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         reloadAllNotes(NoteManager.getParentId());
         break;
       case R.id.iv_paste:
+        if (noteAdapter.getSelectedView() != null)
+          noteAdapter.getSelectedView().setBackgroundResource(android.R.color.white);
         if (copyFlag) {
           NoteApplication.getInstance().getNoteDatabase().copyNote(selectedNote, NoteManager.getParentId());
         } else if (cutFlag) {

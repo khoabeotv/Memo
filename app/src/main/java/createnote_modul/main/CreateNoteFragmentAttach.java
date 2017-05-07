@@ -116,7 +116,7 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
 
           //if (fileType.equals("pdf")) {
           Intent intent = new Intent(Intent.ACTION_VIEW);
-          intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+          intent.setDataAndType(uri, "application/pdf");
           intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
           startActivity(Intent.createChooser(intent, "Open File"));
 

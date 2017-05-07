@@ -45,7 +45,6 @@ public class CreateNoteFragmentForWriteText extends Fragment implements Fragment
     edTitle = (EditText) view.findViewById(R.id.edTitle);
     edContent = (EditText) view.findViewById(R.id.edContent);
     //edContent.setMovementMethod(new ScrollingMovementMethod());
-    edContent.requestFocus();
 
     getTitle_ContentAndSetTitle_ContentEditText();
 
@@ -70,6 +69,9 @@ public class CreateNoteFragmentForWriteText extends Fragment implements Fragment
     content = sharedPreferences.getString(CreateNoteActivity.NOTE_CONTENT_KEY, CreateNoteActivity.DEFAULT_CONTENT);
     edTitle.setText(title);
     edContent.setText(content);
+    if (title.equals("")) {
+      edContent.requestFocus();
+    }
   }
 
   @Override
