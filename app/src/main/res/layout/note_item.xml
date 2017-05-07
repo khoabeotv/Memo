@@ -19,11 +19,10 @@
 
             <ImageView
                 android:id="@+id/ivIcon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:elevation="2dp"
                 app:srcCompat="@drawable/expressions1" />
 
@@ -32,17 +31,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="5dp"
-                android:textColor="#FFFF"
                 android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
                 android:text="..."
+                android:textColor="#FFFF"
                 android:textStyle="bold" />
 
 
         </RelativeLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:orientation="vertical">
@@ -62,16 +61,16 @@
                 android:layout_height="wrap_content"
                 android:text="Content"
                 android:textSize="12dp" />
-        </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="right"
-            android:text="Date"
-            android:textSize="10dp" />
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:gravity="right"
+                android:text="Date"
+                android:textSize="10dp" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
