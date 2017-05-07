@@ -115,7 +115,7 @@ public class NoteDatabase extends SQLiteAssetHelper {
             deleteNote(idChild);
         }
 
-        db_wr.delete("note", "ID__NOTE_TABLE = ?", new String[]{idNote + ""});
+        db_wr.delete("note", "id = ?", new String[]{idNote + ""});
     }
 
     public void insertNote(Note note) {
