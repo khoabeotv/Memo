@@ -33,15 +33,15 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
   public static final int RESULT_CODE_CREATENOTE = 124;
 
 
-  public static String NOTE_CONTENT_KEY = "notetext";
-  public static String NOTE_TITLE_KEY = "notetitle";
-  public static String NOTE_COLOR_KEY = "notecolor";
-  public static String NOTE_ICON_KEY = "noteicon";
-  public static String NOTE_OLDCOLOR_KEY = "noteoldcolor";
-  public static String NAME_OF_SHARED_PREFERENCES_CREATENOTEACTIVITY = "shared_in_CreateNodeActivity";
-  public static String NOTE_ATTACH_KEY = "note_attach_key";
+  public static final String NOTE_CONTENT_KEY = "note_text";
+  public static final String NOTE_TITLE_KEY = "note_title";
+  public static final String NOTE_COLOR_KEY = "note_color";
+  public static final String NOTE_ICON_KEY = "note_icon";
+  public static final String NOTE_OLD_COLOR_KEY = "note_old_color";
+  public static final String NAME_OF_SHARED_PREFERENCES_CREATE_NOTE_ACTIVITY = "shared_in_CreateNodeActivity";
+  public static final String NOTE_ATTACH_KEY = "note_attach_key";
 
-  private static final Set<String> DEFAULT_ATTACH = new HashSet<>();
+  public static final Set<String> DEFAULT_ATTACH = new HashSet<>();
   public static String DEFAULT_TITLE = "";
   public static String DEFAULT_CONTENT = "";
   public static String DEFAULT_COLOR = "#01d8f9";
@@ -63,14 +63,16 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     String content = i.getStringExtra(CreateNoteActivity.NOTE_CONTENT_KEY);
     String color = i.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY);
     int icon = i.getIntExtra(CreateNoteActivity.NOTE_ICON_KEY, R.drawable.expressions0);
+    ArrayList<String> images = i.getStringArrayListExtra(CreateNoteActivity.NOTE_ATTACH_KEY);
 
-    sharedPreferences = getSharedPreferences(NAME_OF_SHARED_PREFERENCES_CREATENOTEACTIVITY, MODE_PRIVATE);
+    sharedPreferences = getSharedPreferences(NAME_OF_SHARED_PREFERENCES_CREATE_NOTE_ACTIVITY, MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putString(NOTE_TITLE_KEY, title);
     editor.putString(NOTE_CONTENT_KEY, content);
     editor.putString(NOTE_COLOR_KEY, color);
-    editor.putString(NOTE_OLDCOLOR_KEY, color);
+    editor.putString(NOTE_OLD_COLOR_KEY, color);
     editor.putInt(NOTE_ICON_KEY, icon);
+    editor.putStringSet(NOTE_ATTACH_KEY, new HashSet<>(images));
 
     SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
 
