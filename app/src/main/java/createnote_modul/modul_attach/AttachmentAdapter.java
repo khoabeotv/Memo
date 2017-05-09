@@ -61,9 +61,12 @@ public class AttachmentAdapter extends BaseAdapter {
     String fileName = Uri.parse(attaches.get(position)).getLastPathSegment();
     if (fileName.contains(".pdf") || fileName.contains(".txt") || fileName.contains(".docx")) {
       holder.tvName.setText(fileName);
+      holder.imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
       holder.imageView.setImageResource(R.drawable.ic_document);
     } else {
+      holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
       holder.imageView.setImageURI(Uri.parse(attaches.get(position)));
+      holder.tvName.setText("");
     }
     return view;
   }

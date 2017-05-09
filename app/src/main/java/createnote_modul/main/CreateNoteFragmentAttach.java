@@ -104,7 +104,6 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     switch (requestCode) {
       case 0:
         if (resultCode == Activity.RESULT_OK) {
-          Log.d("khoa", imageToUploadUri.toString());
           attaches.add(imageToUploadUri.toString());
           tvInBlank.setVisibility(View.GONE);
         }
@@ -120,7 +119,6 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
           String path = getPath(NoteApplication.getInstance(), data.getData());
           Uri fileUri = Uri.fromFile(new File(path));
           String fileName = fileUri.getLastPathSegment();
-          Log.d("khoa", fileName);
           if (!fileName.contains(".pdf") && !fileName.contains(".txt") && !fileName.contains(".docx")) {
             Toast.makeText(getActivity(), "File is not supported", Toast.LENGTH_SHORT).show();
           } else {
@@ -201,14 +199,14 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     } else if (fileName.contains(".txt")) {
       Intent intent = new Intent(Intent.ACTION_VIEW);
       intent.setDataAndType(fileUri, "text/plain");
-      startActivity(intent);
+      startActivity(Intent.createChooser(intent, "Open File"));
     } else if (fileName.contains(".docx")) {
       Intent intent = new Intent();
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       intent.setAction(Intent.ACTION_VIEW);
       String type = "application/msword";
       intent.setDataAndType(fileUri, type);
-      startActivity(intent);
+      startActivity(Intent.createChooser(intent, "Open File"));
     } else {
       Intent i = new Intent(getActivity(), PhotoActivity.class);
       i.putExtra("uri_string", attaches.get(position));
