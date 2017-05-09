@@ -163,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             NoteApplication.getInstance().getNoteDatabase().insertNote(note);
           } else {
             //TODO: update note
+            NoteApplication.getInstance().getNoteDatabase().updateNote(note);
+            Toast.makeText(this, "no"+note.getId(), Toast.LENGTH_SHORT).show();
           }
           reloadAllNotes(NoteManager.getParentId());
         }

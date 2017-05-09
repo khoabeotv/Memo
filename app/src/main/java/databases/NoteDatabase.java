@@ -35,7 +35,7 @@ public class NoteDatabase extends SQLiteAssetHelper {
 
     private static final String NOTE_ID__NOTE_IMG_TABLE = "note_id";
     private static final String IMG__NOTE_IMG_TABLE = "img";
-    private static final String[] ALL_COLUMN__NOTE_IMG_TABLE = { NOTE_ID__NOTE_IMG_TABLE, IMG__NOTE_IMG_TABLE};
+    private static final String[] ALL_COLUMN__NOTE_IMG_TABLE = {NOTE_ID__NOTE_IMG_TABLE, IMG__NOTE_IMG_TABLE};
 
     public NoteDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -135,6 +135,23 @@ public class NoteDatabase extends SQLiteAssetHelper {
 
     }
 
+    public void updateNote(Note note) {
+        SQLiteDatabase db = getWritableDatabase();
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+
+        ContentValues contentValues_NoteTable = new ContentValues();
+        contentValues_NoteTable.put("title", note.getTitle());
+        contentValues_NoteTable.put("icon", note.getIcon());
+        contentValues_NoteTable.put("color", note.getColor());
+        contentValues_NoteTable.put("content", note.getContent());
+        contentValues_NoteTable.put("date", format.format(new Date()));   // lấy thởi điểm hiện tại
+        contentValues_NoteTable.put("id_parent", note.getIdParent());
+
+        long id = db.update("note", contentValues_NoteTable, "id = ?", new String[]{note.getId()+""});
+        deleteNoteImg(note.getId());
+        insertNoteImg(note, note.getId());
+    }
+
     public Cursor getCursorOfChild(int idNote) {
         SQLiteDatabase db_re = getReadableDatabase();
         Cursor cursor = db_re.query("note", ALL_COLUMN__NOTE_TABLE, "id_parent = ?", new String[]{idNote + ""}, null, null, null);
@@ -167,7 +184,18 @@ public class NoteDatabase extends SQLiteAssetHelper {
             db.insert("note_img", null, contentValues_NoteImgTable);
             contentValues_NoteImgTable.clear();
         }
-
     }
+
+    private void deleteNoteImg(long noteID) {
+        SQLiteDatabase db_wr = getWritableDatabase();
+
+        Cursor cursor = db_wr.query("note_img", ALL_COLUMN__NOTE_IMG_TABLE, "note_id = ?", new String[]{noteID + ""}, null, null, null);
+        while (cursor.moveToNext()) {
+            db_wr.delete("note_img", "id = ?", new String[]{noteID + ""});
+        }
+        cursor.close();
+    }
+
+
 
 }
