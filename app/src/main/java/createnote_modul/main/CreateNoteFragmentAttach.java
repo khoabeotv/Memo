@@ -111,14 +111,13 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
         break;
       case 2:
         if (resultCode == Activity.RESULT_OK) {
-          Uri uri = data.getData();
-          File file = new File(uri.toString());
-
+          String uri = data.getDataString();
+          Log.d("URI", String.format("onActivityResult: %s", uri));
           //if (fileType.equals("pdf")) {
-          Intent intent = new Intent(Intent.ACTION_VIEW);
-          intent.setDataAndType(uri, "application/pdf");
-          intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-          startActivity(Intent.createChooser(intent, "Open File"));
+//          Intent intent = new Intent(Intent.ACTION_VIEW);
+//          intent.setDataAndType(uri, "application/pdf");
+//          intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+//          startActivity(Intent.createChooser(intent, "Open File"));
 
 //          } else if (fileType.equals("txt")) {
 //            Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -140,34 +139,6 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
         break;
     }
     attachmentAdapter.notifyDataSetChanged();
-  }
-
-  public String getFileType(Uri uri) throws URISyntaxException {
-    String path = getPath(getActivity(), uri);
-    Log.d("zzzzz", path);
-    String[] strings = path.split(".");
-    return strings[strings.length - 1];
-  }
-
-  public static String getPath(Context context, Uri uri) throws URISyntaxException {
-    if ("content".equalsIgnoreCase(uri.getScheme())) {
-      String[] projection = {"_data"};
-      Cursor cursor = null;
-
-      try {
-        cursor = context.getContentResolver().query(uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow("_data");
-        if (cursor.moveToFirst()) {
-          return cursor.getString(column_index);
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-      return uri.getPath();
-    }
-
-    return null;
   }
 
   @Override

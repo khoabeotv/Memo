@@ -27,20 +27,20 @@
 
         <ImageView
             android:id="@+id/ivIcon1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             />
 
         <ImageView
             android:id="@+id/ivIcon2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             />
 
         <ImageView
             android:id="@+id/ivIcon3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             />
         <ImageView
             android:id="@+id/ivArow"
