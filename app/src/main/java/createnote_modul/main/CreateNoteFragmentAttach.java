@@ -110,7 +110,9 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
         break;
       case 1:
         if (resultCode == Activity.RESULT_OK) {
-          attaches.add(data.getData().toString());
+          String path = getPath(NoteApplication.getInstance(), data.getData());
+          Uri fileUri = Uri.fromFile(new File(path));
+          attaches.add(fileUri.toString());
           tvInBlank.setVisibility(View.GONE);
         }
         break;
