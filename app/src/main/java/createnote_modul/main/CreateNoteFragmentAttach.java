@@ -1,22 +1,25 @@
 package createnote_modul.main;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.SharedPreferencesCompat;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,9 +27,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +39,6 @@ import java.util.Set;
 
 import application.NoteApplication;
 import createnote_modul.modul_attach.AttachmentAdapter;
-import model.Note;
 import teambandau.memo.PhotoActivity;
 import teambandau.memo.R;
 
@@ -46,7 +48,7 @@ import teambandau.memo.R;
 
 public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecycle, View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
-  public static final List<String> selectedImages = new ArrayList<>();
+  public static final List<String> attaches = new ArrayList<>();
 
   private SharedPreferences sharedPreferences;
   private SharedPreferences.Editor editor;
@@ -62,8 +64,8 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     super.onCreate(savedInstanceState);
     sharedPreferences = getActivity().getSharedPreferences(CreateNoteActivity.NAME_OF_SHARED_PREFERENCES_CREATE_NOTE_ACTIVITY, Context.MODE_PRIVATE);
     editor = sharedPreferences.edit();
-    if (selectedImages.size() == 0)
-      selectedImages.addAll(sharedPreferences.getStringSet(CreateNoteActivity.NOTE_ATTACH_KEY, CreateNoteActivity.DEFAULT_ATTACH));
+    if (attaches.size() == 0)
+      attaches.addAll(sharedPreferences.getStringSet(CreateNoteActivity.NOTE_ATTACH_KEY, CreateNoteActivity.DEFAULT_ATTACH));
   }
 
   @Nullable
@@ -74,13 +76,13 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     fabAttach.setOnClickListener(this);
 
     gvAttachments = (GridView) view.findViewById(R.id.gv_attach);
-    attachmentAdapter = new AttachmentAdapter(getActivity(), selectedImages);
+    attachmentAdapter = new AttachmentAdapter(getActivity(), attaches);
     gvAttachments.setAdapter(attachmentAdapter);
     gvAttachments.setOnItemClickListener(this);
     gvAttachments.setOnItemLongClickListener(this);
 
     tvInBlank = (TextView) view.findViewById(R.id.tv_attach);
-    if (selectedImages.size() > 0)
+    if (attaches.size() > 0)
       tvInBlank.setVisibility(View.GONE);
 
     return view;
@@ -92,7 +94,7 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
 
   @Override
   public void onPauseFragment() {
-    Set<String> sets = new HashSet<>(selectedImages);
+    Set<String> sets = new HashSet<>(attaches);
     editor.putStringSet(CreateNoteActivity.NOTE_ATTACH_KEY, sets);
     SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
   }
@@ -103,37 +105,28 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
       case 0:
         if (resultCode == Activity.RESULT_OK) {
           Log.d("khoa", imageToUploadUri.toString());
-          selectedImages.add(imageToUploadUri.toString());
+          attaches.add(imageToUploadUri.toString());
           tvInBlank.setVisibility(View.GONE);
         }
         break;
       case 1:
         if (resultCode == Activity.RESULT_OK) {
-          selectedImages.add(data.getData().toString());
+          attaches.add(data.getData().toString());
           tvInBlank.setVisibility(View.GONE);
         }
         break;
       case 2:
         if (resultCode == Activity.RESULT_OK) {
-          //if (fileType.equals("pdf")) {
-//          Intent intent = new Intent(Intent.ACTION_VIEW);
-//          intent.setDataAndType(pdfUri, "application/pdf");
-//          intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-//          startActivity(Intent.createChooser(intent, "Open File"));
-
-//          } else if (fileType.equals("txt")) {
-//            Intent intent = new Intent(Intent.ACTION_VIEW);
-//            intent.setDataAndType(uri, "text/plain");
-//            startActivity(intent);
-//
-//          } else if (fileType.equals(".docx")) {
-//            Intent intent = new Intent();
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            intent.setAction(Intent.ACTION_VIEW);
-//            String type = "application/msword";
-//            intent.setDataAndType(uri, type);
-//            startActivity(intent);
-//          }
+          String path = getPath(NoteApplication.getInstance(), data.getData());
+          Uri fileUri = Uri.fromFile(new File(path));
+          String fileName = fileUri.getLastPathSegment();
+          Log.d("khoa", fileName);
+          if (!fileName.contains(".pdf") && !fileName.contains(".txt") && !fileName.contains(".docx")) {
+            Toast.makeText(getActivity(), "File is not supported", Toast.LENGTH_SHORT).show();
+          } else {
+            attaches.add(fileUri.toString());
+            tvInBlank.setVisibility(View.GONE);
+          }
         }
         break;
       default:
@@ -198,9 +191,29 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
 
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    Intent i = new Intent(getActivity(), PhotoActivity.class);
-    i.putExtra("uri_string", selectedImages.get(position));
-    startActivity(i);
+    Uri fileUri = Uri.parse(attaches.get(position));
+    String fileName = fileUri.getLastPathSegment();
+    if (fileName.contains(".pdf")) {
+      Intent intent = new Intent(Intent.ACTION_VIEW);
+      intent.setDataAndType(fileUri, "application/pdf");
+      intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+      startActivity(Intent.createChooser(intent, "Open File"));
+    } else if (fileName.contains(".txt")) {
+      Intent intent = new Intent(Intent.ACTION_VIEW);
+      intent.setDataAndType(fileUri, "text/plain");
+      startActivity(intent);
+    } else if (fileName.contains(".docx")) {
+      Intent intent = new Intent();
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      intent.setAction(Intent.ACTION_VIEW);
+      String type = "application/msword";
+      intent.setDataAndType(fileUri, type);
+      startActivity(intent);
+    } else {
+      Intent i = new Intent(getActivity(), PhotoActivity.class);
+      i.putExtra("uri_string", attaches.get(position));
+      startActivity(i);
+    }
   }
 
   @Override
@@ -214,7 +227,7 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
       public void onClick(DialogInterface dialog, int item) {
         switch (item) {
           case 0:
-            selectedImages.remove(position);
+            attaches.remove(position);
             attachmentAdapter.notifyDataSetChanged();
             break;
         }
@@ -225,18 +238,103 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     return true;
   }
 
-  public String getRealPathFromURI(Context context, Uri contentUri) {
-    Cursor cursor = null;
-    try {
-      String[] proj = { MediaStore.Images.Media.DATA };
-      cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
-      int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-      cursor.moveToFirst();
-      return cursor.getString(column_index);
-    } finally {
-      if (cursor != null) {
-        cursor.close();
+  @TargetApi(Build.VERSION_CODES.KITKAT)
+  public static String getPath(Context context, Uri uri) {
+    final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+    // DocumentProvider
+    if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+      // ExternalStorageProvider
+      if (isExternalStorageDocument(uri)) {
+        final String docId = DocumentsContract.getDocumentId(uri);
+        final String[] split = docId.split(":");
+        final String type = split[0];
+
+        if ("primary".equalsIgnoreCase(type)) {
+          return Environment.getExternalStorageDirectory() + "/" + split[1];
+        }
+        // TODO handle non-primary volumes
+      }
+      // DownloadsProvider
+      else if (isDownloadsDocument(uri)) {
+        final String id = DocumentsContract.getDocumentId(uri);
+        final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+        return getDataColumn(context, contentUri, null, null);
+      }
+      // MediaProvider
+      else if (isMediaDocument(uri)) {
+        final String docId = DocumentsContract.getDocumentId(uri);
+        final String[] split = docId.split(":");
+        final String type = split[0];
+        Uri contentUri = null;
+        if ("image".equals(type)) {
+          contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        } else if ("video".equals(type)) {
+          contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        } else if ("audio".equals(type)) {
+          contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        }
+        final String selection = "_id=?";
+        final String[] selectionArgs = new String[]{split[1]};
+        return getDataColumn(context, contentUri, selection, selectionArgs);
       }
     }
+    // MediaStore (and general)
+    else if ("content".equalsIgnoreCase(uri.getScheme())) {
+      // Return the remote address
+      if (isGooglePhotosUri(uri))
+        return uri.getLastPathSegment();
+      return getDataColumn(context, uri, null, null);
+    }
+    // File
+    else if ("file".equalsIgnoreCase(uri.getScheme())) {
+      return uri.getPath();
+    }
+    return null;
+  }
+
+  public static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+    Cursor cursor = null;
+    final String column = "_data";
+    final String[] projection = {column};
+    try {
+      cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+      if (cursor != null && cursor.moveToFirst()) {
+        final int index = cursor.getColumnIndexOrThrow(column);
+        return cursor.getString(index);
+      }
+    } finally {
+      if (cursor != null)
+        cursor.close();
+    }
+    return null;
+  }
+
+  public static boolean isExternalStorageDocument(Uri uri) {
+    return "com.android.externalstorage.documents".equals(uri.getAuthority());
+  }
+
+  /**
+   * @param uri The Uri to check.
+   * @return Whether the Uri authority is DownloadsProvider.
+   */
+  public static boolean isDownloadsDocument(Uri uri) {
+    return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+  }
+
+  /**
+   * @param uri The Uri to check.
+   * @return Whether the Uri authority is MediaProvider.
+   */
+  public static boolean isMediaDocument(Uri uri) {
+    return "com.android.providers.media.documents".equals(uri.getAuthority());
+  }
+
+  /**
+   * @param uri The Uri to check.
+   * @return Whether the Uri authority is Google Photos.
+   */
+  public static boolean isGooglePhotosUri(Uri uri) {
+    return "com.google.android.apps.photos.content".equals(uri.getAuthority());
   }
 }

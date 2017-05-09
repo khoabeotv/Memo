@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
@@ -23,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +35,6 @@ import adapters.NoteAdapter;
 import application.NoteApplication;
 import createnote_modul.main.CreateNoteActivity;
 import createnote_modul.main.CreateNoteFragmentAttach;
-import databases.NoteDatabase;
 import model.Note;
 import model.NoteManager;
 import util.Util;
@@ -86,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
           unSelected();
         } else {
           Intent i = new Intent(MainActivity.this, CreateNoteActivity.class);
-          i.putExtra(CreateNoteActivity.NOTE_NEW_OR_UPDATE, true);
+          i.putExtra(CreateNoteActivity.NOTE_NEW_OR_UPDATE, 0);
           i.putExtra(CreateNoteActivity.NOTE_TITLE_KEY, "");
           i.putExtra(CreateNoteActivity.NOTE_CONTENT_KEY, "");
           i.putExtra(CreateNoteActivity.NOTE_COLOR_KEY, getResources().getString(R.color.color_cool_0));
@@ -139,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    CreateNoteFragmentAttach.selectedImages.clear();
+    CreateNoteFragmentAttach.attaches.clear();
     switch (requestCode) {
       case (CreateNoteActivity.REQUEST_CODE_CREATENOTE): {
         if (resultCode == CreateNoteActivity.RESULT_CODE_CREATENOTE) {
@@ -151,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
           String icon = data.getStringExtra(CreateNoteActivity.NOTE_ICON_KEY);
           String color = data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY);
           String content = data.getStringExtra(CreateNoteActivity.NOTE_CONTENT_KEY);
-          boolean checkNewOrUpdate = data.getBooleanExtra(CreateNoteActivity.NOTE_NEW_OR_UPDATE, true);
+          int idNoteUpdate = data.getIntExtra(CreateNoteActivity.NOTE_NEW_OR_UPDATE, 0);
 
           SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
           String date = format.format(new Date());
@@ -159,10 +156,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
           ArrayList<String> imgs = data.getStringArrayListExtra(CreateNoteActivity.NOTE_ATTACH_KEY);
 
           Note note = new Note(-1, title, icon, color, content, date, NoteManager.getParentId(), imgs);
-          if (checkNewOrUpdate) {
+          if (idNoteUpdate == 0) {
             NoteApplication.getInstance().getNoteDatabase().insertNote(note);
           } else {
             //TODO: update note
+            //idNoteUpdate là cái id của note cần update
           }
           reloadAllNotes(NoteManager.getParentId());
         }
@@ -337,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
       i.putExtra(CreateNoteActivity.NOTE_ICON_KEY, getResources().getIdentifier(note.getIcon(), "drawable", getPackageName()));
       i.putStringArrayListExtra(CreateNoteActivity.NOTE_ATTACH_KEY, note.getImg());
-      i.putExtra(CreateNoteActivity.NOTE_NEW_OR_UPDATE, false);
+      i.putExtra(CreateNoteActivity.NOTE_NEW_OR_UPDATE, note.getId());
       startActivityForResult(i, CreateNoteActivity.REQUEST_CODE_CREATENOTE);
     }
   }

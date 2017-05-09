@@ -6,8 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -20,23 +20,23 @@ import teambandau.memo.R;
 public class AttachmentAdapter extends BaseAdapter {
 
   private Context context;
-  private List<String> images;
+  private List<String> attaches;
   private LayoutInflater inflater;
 
   public AttachmentAdapter(Context context, List<String> images) {
     this.context = context;
     this.inflater = LayoutInflater.from(context);
-    this.images = images;
+    this.attaches = images;
   }
 
   @Override
   public int getCount() {
-    return images.size();
+    return attaches.size();
   }
 
   @Override
   public Object getItem(int position) {
-    return images.get(position);
+    return attaches.get(position);
   }
 
   @Override
@@ -51,16 +51,25 @@ public class AttachmentAdapter extends BaseAdapter {
       view = inflater.inflate(R.layout.attach_item, null, false);
       holder = new ViewHolder();
       holder.imageView = (ImageView) view.findViewById(R.id.im_attach);
+      holder.tvName = (TextView) view.findViewById(R.id.tv_attach_name);
       view.setTag(holder);
     } else {
       holder = (ViewHolder) view.getTag();
     }
 
-    holder.imageView.setImageURI(Uri.parse(images.get(position)));
+
+    String fileName = Uri.parse(attaches.get(position)).getLastPathSegment();
+    if (fileName.contains(".pdf") || fileName.contains(".txt") || fileName.contains(".docx")) {
+      holder.tvName.setText(fileName);
+      holder.imageView.setImageResource(R.drawable.ic_document);
+    } else {
+      holder.imageView.setImageURI(Uri.parse(attaches.get(position)));
+    }
     return view;
   }
 
   static class ViewHolder {
     ImageView imageView;
+    TextView tvName;
   }
 }

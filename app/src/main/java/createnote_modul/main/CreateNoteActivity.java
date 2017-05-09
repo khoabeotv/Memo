@@ -65,12 +65,12 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     String color = i.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY);
     int icon = i.getIntExtra(CreateNoteActivity.NOTE_ICON_KEY, R.drawable.expressions0);
     ArrayList<String> images = i.getStringArrayListExtra(CreateNoteActivity.NOTE_ATTACH_KEY);
-    boolean checkNewOrUpdate = i.getBooleanExtra(NOTE_NEW_OR_UPDATE, true);
+    int idNoteUpdate = i.getIntExtra(NOTE_NEW_OR_UPDATE, 0);
 
     sharedPreferences = getSharedPreferences(NAME_OF_SHARED_PREFERENCES_CREATE_NOTE_ACTIVITY, MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putString(NOTE_TITLE_KEY, title);
-    editor.putBoolean(NOTE_NEW_OR_UPDATE, checkNewOrUpdate);
+    editor.putInt(NOTE_NEW_OR_UPDATE, idNoteUpdate);
     editor.putString(NOTE_CONTENT_KEY, content);
     editor.putString(NOTE_COLOR_KEY, color);
     editor.putString(NOTE_OLD_COLOR_KEY, color);
@@ -164,7 +164,7 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     ArrayList<String> attachments = new ArrayList<>();
     attachments.addAll(sharedPreferences.getStringSet(NOTE_ATTACH_KEY, DEFAULT_ATTACH));
     i.putStringArrayListExtra(NOTE_ATTACH_KEY, attachments);
-    i.putExtra(NOTE_NEW_OR_UPDATE, sharedPreferences.getBoolean(NOTE_NEW_OR_UPDATE, true));
+    i.putExtra(NOTE_NEW_OR_UPDATE, sharedPreferences.getInt(NOTE_NEW_OR_UPDATE, 0));
     setResult(RESULT_CODE_CREATENOTE, i);
     finish();
   }

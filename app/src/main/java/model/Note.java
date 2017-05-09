@@ -1,12 +1,13 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by TrKaJv on 19-Apr-17.
  */
 
-public class Note {
+public class Note implements Serializable {
   private int id;
   private String title;
   private String icon;
