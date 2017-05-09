@@ -191,7 +191,7 @@ public class NoteDatabase extends SQLiteAssetHelper {
 
         Cursor cursor = db_wr.query("note_img", ALL_COLUMN__NOTE_IMG_TABLE, "note_id = ?", new String[]{noteID + ""}, null, null, null);
         while (cursor.moveToNext()) {
-            db_wr.delete("note_img", "id = ?", new String[]{noteID + ""});
+            db_wr.delete("note_img", "note_id = ?", new String[]{noteID + ""});
         }
         cursor.close();
     }
