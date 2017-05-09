@@ -45,7 +45,22 @@ public class CusPictureIconAdapterForListView extends ArrayAdapter<String> {
         ImageView iv2 = (ImageView) view.findViewById(R.id.ivIcon2);
         ImageView iv3 = (ImageView) view.findViewById(R.id.ivIcon3);
 
-        tv.setText(objects.get(position));
+        String type = "";
+        switch (objects.get(position)){
+            case (Icon.ICON_ANIMAL):{
+                type = "Animal";
+                break;
+            }
+            case(Icon.ICON_EXPRESSIONS):{
+                type = "Expressions";
+                break;
+            }
+            case(Icon.ICON_SPW):{
+                type = "Life";
+                break;
+            }
+        }
+        tv.setText(type);
         iv1.setImageResource(Icon.hashMapIcon.get(objects.get(position)).get(0));
         iv2.setImageResource(Icon.hashMapIcon.get(objects.get(position)).get(1));
         iv3.setImageResource(Icon.hashMapIcon.get(objects.get(position)).get(2));

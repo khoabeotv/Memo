@@ -15,8 +15,10 @@ public class Icon {
 
     public static final String ICON_EXPRESSIONS = "expressions";
     public static final String ICON_ANIMAL = "animal_";
+    public static final String ICON_SPW = "sp_w_";
     public static final int ICON_EXPRESSIONS_NUMS = 35;
     public static final int ICON_ANIMAL_NUMS = 30;
+    public static final int ICON_SPW_NUMS = 23;
 
 
     public static final String ICON_LOVE = "love";
@@ -30,6 +32,7 @@ public class Icon {
         iconTypes = new ArrayList<>();
         iconTypes.add(ICON_EXPRESSIONS);
         iconTypes.add(ICON_ANIMAL);
+        iconTypes.add(ICON_SPW);
     }
 
     public static void load(Context context){
@@ -56,6 +59,16 @@ public class Icon {
             hashMapIconName.put(resId,ICON_ANIMAL+i);
         }
         hashMapIcon.put(ICON_ANIMAL,icons2);
+
+        ArrayList<Integer> icons3 = new ArrayList<>();
+        for(int i = 0;i <= ICON_SPW_NUMS;i++){
+            int resId = context.getResources().getIdentifier(ICON_SPW+i
+                    ,"drawable",
+                    context.getPackageName());
+            icons3.add(resId);
+            hashMapIconName.put(resId,ICON_SPW+i);
+        }
+        hashMapIcon.put(ICON_SPW,icons3);
 
     }
 
