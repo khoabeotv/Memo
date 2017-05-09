@@ -16,6 +16,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.SharedPreferencesCompat;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import application.NoteApplication;
 import createnote_modul.modul_attach.AttachmentAdapter;
+import model.Note;
 import teambandau.memo.PhotoActivity;
 import teambandau.memo.R;
 
@@ -53,7 +56,6 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
   private TextView tvInBlank;
   private AttachmentAdapter attachmentAdapter;
   private Uri imageToUploadUri;
-
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,6 +102,7 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     switch (requestCode) {
       case 0:
         if (resultCode == Activity.RESULT_OK) {
+          Log.d("khoa", imageToUploadUri.toString());
           selectedImages.add(imageToUploadUri.toString());
           tvInBlank.setVisibility(View.GONE);
         }
@@ -112,11 +115,9 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
         break;
       case 2:
         if (resultCode == Activity.RESULT_OK) {
-          String uri = data.getDataString();
-          Log.d("URI", String.format("onActivityResult: %s", uri));
           //if (fileType.equals("pdf")) {
 //          Intent intent = new Intent(Intent.ACTION_VIEW);
-//          intent.setDataAndType(uri, "application/pdf");
+//          intent.setDataAndType(pdfUri, "application/pdf");
 //          intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 //          startActivity(Intent.createChooser(intent, "Open File"));
 
@@ -169,7 +170,7 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
               intent.setType("*/*");
               intent.addCategory(Intent.CATEGORY_OPENABLE);
               startActivityForResult(
-                      Intent.createChooser(intent, "Select a File to Upload"),
+                      Intent.createChooser(intent, "Select a File to Attach"),
                       2);
               break;
           }
@@ -222,5 +223,20 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     AlertDialog alert = builder.create();
     alert.show();
     return true;
+  }
+
+  public String getRealPathFromURI(Context context, Uri contentUri) {
+    Cursor cursor = null;
+    try {
+      String[] proj = { MediaStore.Images.Media.DATA };
+      cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+      int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+      cursor.moveToFirst();
+      return cursor.getString(column_index);
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
   }
 }

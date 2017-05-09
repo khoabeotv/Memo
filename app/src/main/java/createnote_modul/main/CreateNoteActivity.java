@@ -34,6 +34,7 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
 
 
   public static final String NOTE_CONTENT_KEY = "note_text";
+  public static final String NOTE_NEW_OR_UPDATE = "new_or_update";
   public static final String NOTE_TITLE_KEY = "note_title";
   public static final String NOTE_COLOR_KEY = "note_color";
   public static final String NOTE_ICON_KEY = "note_icon";
@@ -64,10 +65,12 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     String color = i.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY);
     int icon = i.getIntExtra(CreateNoteActivity.NOTE_ICON_KEY, R.drawable.expressions0);
     ArrayList<String> images = i.getStringArrayListExtra(CreateNoteActivity.NOTE_ATTACH_KEY);
+    boolean checkNewOrUpdate = i.getBooleanExtra(NOTE_NEW_OR_UPDATE, true);
 
     sharedPreferences = getSharedPreferences(NAME_OF_SHARED_PREFERENCES_CREATE_NOTE_ACTIVITY, MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putString(NOTE_TITLE_KEY, title);
+    editor.putBoolean(NOTE_NEW_OR_UPDATE, checkNewOrUpdate);
     editor.putString(NOTE_CONTENT_KEY, content);
     editor.putString(NOTE_COLOR_KEY, color);
     editor.putString(NOTE_OLD_COLOR_KEY, color);
@@ -142,10 +145,10 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     CreateNoteFragmentAttach createNoteFragmentAttach = new CreateNoteFragmentAttach();
 
     viewPagerAdapter.addFragment(createNoteFragmentForWriteText, "Write");
+    viewPagerAdapter.addFragment(createNoteFragmentAttach,"Attach");
     viewPagerAdapter.addFragment(createNoteFragmentForChooseColor, "Color");
     viewPagerAdapter.addFragment(createNoteFragmentForChooseIcon, "Icon");
     viewPagerAdapter.addFragment(createNoteFragmentForSaveNote, "Save");
-    viewPagerAdapter.addFragment(createNoteFragmentAttach,"Record");
 
     viewPager.setAdapter(viewPagerAdapter);
     viewPager.setPageTransformer(true, new DepthAnimation());
@@ -161,7 +164,7 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     ArrayList<String> attachments = new ArrayList<>();
     attachments.addAll(sharedPreferences.getStringSet(NOTE_ATTACH_KEY, DEFAULT_ATTACH));
     i.putStringArrayListExtra(NOTE_ATTACH_KEY, attachments);
-
+    i.putExtra(NOTE_NEW_OR_UPDATE, sharedPreferences.getBoolean(NOTE_NEW_OR_UPDATE, true));
     setResult(RESULT_CODE_CREATENOTE, i);
     finish();
   }
@@ -235,10 +238,10 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
     tabLayout.getTabAt(4).setText("");
 
     tabLayout.getTabAt(0).setIcon(R.drawable.ic_write_selected);
-    tabLayout.getTabAt(1).setIcon(R.drawable.ic_color);
-    tabLayout.getTabAt(2).setIcon(R.drawable.ic_icon);
-    tabLayout.getTabAt(3).setIcon(R.drawable.ic_save);
-    tabLayout.getTabAt(4).setIcon(R.drawable.ic_attachment);
+    tabLayout.getTabAt(2).setIcon(R.drawable.ic_color);
+    tabLayout.getTabAt(3).setIcon(R.drawable.ic_icon);
+    tabLayout.getTabAt(4).setIcon(R.drawable.ic_save);
+    tabLayout.getTabAt(1).setIcon(R.drawable.ic_attachment);
   }
 
   public void setupTabsIcon(int position, boolean selected) {
@@ -247,16 +250,16 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
         case 0:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_write_selected);
           break;
-        case 1:
+        case 2:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_color_selected);
           break;
-        case 2:
+        case 3:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_icon_selected);
           break;
-        case 3:
+        case 4:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_save_selected);
           break;
-        case 4:
+        case 1:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_attachment_selected);
           break;
       }
@@ -265,16 +268,16 @@ public class CreateNoteActivity extends AppCompatActivity implements CreateNoteF
         case 0:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_write);
           break;
-        case 1:
+        case 2:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_color);
           break;
-        case 2:
+        case 3:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_icon);
           break;
-        case 3:
+        case 4:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_save);
           break;
-        case 4:
+        case 1:
           tabLayout.getTabAt(position).setIcon(R.drawable.ic_attachment);
           break;
       }

@@ -106,6 +106,11 @@ public class NoteAdapter extends BaseAdapter {
       tvHasChild.setText("");
     }
 
+    if (notes.get(position).getImg().size() > 0) {
+      ImageView imAttach = (ImageView) view.findViewById(R.id.image_attach_item);
+      imAttach.setImageResource(R.drawable.ic_attach_file);
+    }
+
     tvTitle.setText(notes.get(position).getTitle());
     tvContent.setText(notes.get(position).getContent());
 
