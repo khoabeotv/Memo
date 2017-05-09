@@ -41,7 +41,7 @@ import teambandau.memo.R;
  * Created by l on 5/1/2017.
  */
 
-public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecycle, View.OnClickListener, AdapterView.OnItemClickListener {
+public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecycle, View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
   public static final List<String> selectedImages = new ArrayList<>();
 
@@ -75,6 +75,7 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     attachmentAdapter = new AttachmentAdapter(getActivity(), selectedImages);
     gvAttachments.setAdapter(attachmentAdapter);
     gvAttachments.setOnItemClickListener(this);
+    gvAttachments.setOnItemLongClickListener(this);
 
     tvInBlank = (TextView) view.findViewById(R.id.tv_attach);
     if (selectedImages.size() > 0)
@@ -199,5 +200,27 @@ public class CreateNoteFragmentAttach extends Fragment implements FragmentLifecy
     Intent i = new Intent(getActivity(), PhotoActivity.class);
     i.putExtra("uri_string", selectedImages.get(position));
     startActivity(i);
+  }
+
+  @Override
+  public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+    final CharSequence[] items = {
+            "Delete"
+    };
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    builder.setItems(items, new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int item) {
+        switch (item) {
+          case 0:
+            selectedImages.remove(position);
+            attachmentAdapter.notifyDataSetChanged();
+            break;
+        }
+      }
+    });
+    AlertDialog alert = builder.create();
+    alert.show();
+    return true;
   }
 }

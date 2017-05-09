@@ -46,31 +46,21 @@ public class AttachmentAdapter extends BaseAdapter {
 
   @Override
   public View getView(final int position, View view, ViewGroup parent) {
-    ViewHolder holder = null;
+    ViewHolder holder;
     if (view == null) {
       view = inflater.inflate(R.layout.attach_item, null, false);
       holder = new ViewHolder();
       holder.imageView = (ImageView) view.findViewById(R.id.im_attach);
-      holder.imDelete = (ImageView) view.findViewById(R.id.im_delete);
       view.setTag(holder);
     } else {
       holder = (ViewHolder) view.getTag();
     }
 
     holder.imageView.setImageURI(Uri.parse(images.get(position)));
-    holder.imDelete.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        images.remove(position);
-        notifyDataSetChanged();
-      }
-    });
-
     return view;
   }
 
   static class ViewHolder {
     ImageView imageView;
-    ImageView imDelete;
   }
 }
