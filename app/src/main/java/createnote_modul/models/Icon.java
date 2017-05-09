@@ -14,7 +14,10 @@ public class Icon {
     public static final ArrayList<String> iconTypes;
 
     public static final String ICON_EXPRESSIONS = "expressions";
+    public static final String ICON_ANIMAL = "animal_";
     public static final int ICON_EXPRESSIONS_NUMS = 35;
+    public static final int ICON_ANIMAL_NUMS = 30;
+
 
     public static final String ICON_LOVE = "love";
     public static final String ICON_PAPERS = "laper";
@@ -26,6 +29,7 @@ public class Icon {
     static {
         iconTypes = new ArrayList<>();
         iconTypes.add(ICON_EXPRESSIONS);
+        iconTypes.add(ICON_ANIMAL);
     }
 
     public static void load(Context context){
@@ -42,6 +46,17 @@ public class Icon {
             hashMapIconName.put(resId,ICON_EXPRESSIONS+i);
         }
         hashMapIcon.put(ICON_EXPRESSIONS,icons1);
+
+        ArrayList<Integer> icons2 = new ArrayList<>();
+        for(int i = 1;i <= ICON_ANIMAL_NUMS;i++){
+            int resId = context.getResources().getIdentifier(ICON_ANIMAL+i
+                    ,"drawable",
+                    context.getPackageName());
+            icons2.add(resId);
+            hashMapIconName.put(resId,ICON_ANIMAL+i);
+        }
+        hashMapIcon.put(ICON_ANIMAL,icons2);
+
     }
 
 }
