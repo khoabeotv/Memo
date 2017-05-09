@@ -160,12 +160,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             NoteApplication.getInstance().getNoteDatabase().insertNote(note);
           } else {
             //TODO: update note
-<<<<<<< HEAD
             //idNoteUpdate là cái id của note cần update
-=======
+            note.setId(idNoteUpdate);
             NoteApplication.getInstance().getNoteDatabase().updateNote(note);
             Toast.makeText(this, "no"+note.getId(), Toast.LENGTH_SHORT).show();
->>>>>>> 5cce8c3dd0432e40d964c0440b6b0118c5e8c8be
           }
           reloadAllNotes(NoteManager.getParentId());
         }
