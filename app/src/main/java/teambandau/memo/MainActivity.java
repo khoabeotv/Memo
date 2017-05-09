@@ -140,9 +140,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     switch (requestCode) {
       case (CreateNoteActivity.REQUEST_CODE_CREATENOTE): {
         if (resultCode == CreateNoteActivity.RESULT_CODE_CREATENOTE) {
-          Toast.makeText(this, data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " +
-                  data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " +
-                  data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY), Toast.LENGTH_SHORT).show();
+//          Toast.makeText(this, data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " +
+//                  data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY) + " " +
+//                  data.getStringExtra(CreateNoteActivity.NOTE_COLOR_KEY), Toast.LENGTH_SHORT).show();
 
           String title = data.getStringExtra(CreateNoteActivity.NOTE_TITLE_KEY);
           String icon = data.getStringExtra(CreateNoteActivity.NOTE_ICON_KEY);
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             //idNoteUpdate là cái id của note cần update
             note.setId(idNoteUpdate);
             NoteApplication.getInstance().getNoteDatabase().updateNote(note);
-            Toast.makeText(this, "no"+note.getId(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "no"+note.getId(), Toast.LENGTH_SHORT).show();
           }
           reloadAllNotes(NoteManager.getParentId());
         }
