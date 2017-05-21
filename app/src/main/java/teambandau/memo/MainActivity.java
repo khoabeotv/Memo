@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
           if (idNoteUpdate == 0) {
             NoteApplication.getInstance().getNoteDatabase().insertNote(note);
           } else {
-            //TODO: update note
             note.setId(idNoteUpdate);
             NoteApplication.getInstance().getNoteDatabase().updateNote(note);
           }
@@ -307,8 +306,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         public void onFinish() {
-          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
           if (doubleTapItem) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             setCurrentNotesByParentId(note.getId());
             tvMyNotes.setTypeface(null, Typeface.NORMAL);
             tvMyNotes.setTextColor(Color.parseColor("#9FA8DA"));
